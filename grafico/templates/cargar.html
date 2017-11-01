@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cargar</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+	<div class="row filas"></div>
+
+	<div class="row filas">
+		<div class="col-sm-3 columnas"></div>
+		<div class="col-sm-6 columnas">
+			<form class="form-group" method="POST" enctype="multipart/form-data">
+				{% csrf_token %} 
+				<h4>Seleccione un archivo .csv para cargar: </h4>
+ 			    <!--<label class="btn btn-default btn-file">
+    				Explorar <input name="Archivo" type="file" style="display: none;" onchange="checkfile(this); this.form.submit();">
+				</label>-->
+				{{form.as_p}}
+				<button type="submit">Enviar</button>
+			</form>
+		</div>
+		<div class="col-sm-3 columnas"></div>
+	</div>
+
+	<div class="row filas"></div>
+
+</div>
+
+<script type="text/javascript" language="javascript">
+	function checkfile(sender) {
+	    var validExts = new Array(".csv");
+	    var fileExt = sender.value;
+	    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+	    if (validExts.indexOf(fileExt) < 0) {
+	      alert("Extensión inválida, solo se aceptan archivos " +
+	               validExts.toString());
+	      return false;
+	    }
+	    else return true;
+	}
+</script>
+</body>
+</html>
