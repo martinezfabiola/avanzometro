@@ -1,3 +1,15 @@
+# Universidad Simon Bolivar
+# Ingenieria de Software
+# Integrantes:
+#     Abelardo Salazar
+#     Amanda Camacho
+#     Fabiola Martinez
+#     Lautaro Villalon
+#     Maria Bracamonte
+#     Yarima Luciani
+# Descripcion: archivo manejador de la base de datos.
+# Ultima modificacion: 2 de noviembre 2017. 
+
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User

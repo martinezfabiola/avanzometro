@@ -1,9 +1,18 @@
+# Universidad Simon Bolivar
+# Ingenieria de Software
+# Integrantes:
+# 	Abelardo Salazar
+# 	Amanda Camacho
+# 	Fabiola Martinez
+# 	Lautaro Villalon
+# 	Maria Bracamonte
+# 	Yarima Luciani
+# Descripcion: archivo manejador de vistas.
+# Ultima modificacion: 2 de noviembre 2017. 
+
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.template.loader import render_to_string
-
-
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django import forms
@@ -14,25 +23,6 @@ from .models import *
 from grafico.forms import SignUpForm
 
 # Create your views here.
-
-"""
-class cargarArchivo(TemplateView):
-	template_name = 'cargar.html'
-
-	@staticmethod
-	def post(request):
-		if request.method == 'POST':
-			print(request.FILES['Archivo'])
-			return render(request, 'cargar.html', {})
-		
-
-
-"""
-
-"""@login_required
-def home(request):
-
-	return redirect('../login')"""
 
 
 def signup(request):

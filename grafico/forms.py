@@ -1,3 +1,15 @@
+# Universidad Simon Bolivar
+# Ingenieria de Software
+# Integrantes:
+#     Abelardo Salazar
+#     Amanda Camacho
+#     Fabiola Martinez
+#     Lautaro Villalon
+#     Maria Bracamonte
+#     Yarima Luciani
+# Descripcion: archivo que maneja form de django, creados para cargar documento csv y registro de usuario. 
+# Ultima modificacion: 2 de noviembre 2017.
+
 from django import forms
 from .models import Documento
 from django.contrib.auth.forms import UserCreationForm

@@ -1,3 +1,15 @@
+# Universidad Simon Bolivar
+# Ingenieria de Software
+# Integrantes:
+# 	Abelardo Salazar
+# 	Amanda Camacho
+# 	Fabiola Martinez
+# 	Lautaro Villalon
+# 	Maria Bracamonte
+# 	Yarima Luciani
+# Descripcion: archivo que contiene pruebas unitarias.
+# Ultima modificacion: 2 de noviembre 2017.
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test import Client
