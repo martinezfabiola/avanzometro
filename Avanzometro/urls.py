@@ -24,7 +24,8 @@ from grafico import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^grafico/carga', views.cargarArchivo),
-    url(r'^grafico/form', views.introducirDatos)
+    url(r'^grafico/form', views.introducirDatos),
+    url(r'^grafico/chart', views.mostrarGrafico)
 ]
 
 if settings.DEBUG:

@@ -1,1 +1,1 @@
-/usr/lib/python2.7/codecs.py.qm
+/usr/lib/python2.7/codecs.py�

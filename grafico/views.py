@@ -25,7 +25,7 @@ def cargarArchivo(request):
 		form = DocumentForm(request.POST, request.FILES)
 		if form.is_valid():
 			form.save()
-			return redirect('form.html')
+			return redirect('/grafico/form')
 
 	else:
 		form = DocumentForm()
@@ -39,7 +39,7 @@ def introducirDatos(request):
 		cohorteQuery = request.POST['cohorteQuery']
 		trimQuery = request.POST['trimQuery']
 		anioQuery = request.POST['anioQuery']
-		carreraQuery = request.POST['carreraQuery']
+		carreraQuery = request.POST['carreraQuery'][:4]
 
 		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, estado, id ORDER BY sum;"
 
@@ -64,7 +64,14 @@ def introducirDatos(request):
 
 			i += 16
 
-		return render(request, 'chart.html', resultDic)
+		request.session['resultDic'] = resultDic
+		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
+
+		return redirect('/grafico/chart')
+
+	Cursa.objects.all().delete()
+	Asignatura.objects.all().delete()
+	Estudiante.objects.all().delete()
 
 	archivo = Documento.objects.latest('id').documento.url[1:]
 	lector = csv.DictReader(open(archivo))
@@ -108,4 +115,15 @@ def introducirDatos(request):
 
 	return render(request, 'form.html', {})
 
+def mostrarGrafico(request):
+	template_name='chart.html'
 
+	resultDic = request.session['resultDic']
+
+	carreraQuery = request.session['carreraQuery']
+
+	print(resultDic)
+
+
+
+	return render(request, 'chart.html', {'resultDic': resultDic, 'carreraQuery': carreraQuery})
