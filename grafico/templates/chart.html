@@ -16,12 +16,12 @@ Ultima modificacion: 3 de noviembre 2017. -->
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 {%load static%}
-<link rel="stylesheet" type="text/css" href="{% static 'chart.css'%}">
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+<script src="{% static 'js/jquery.min.js'%}"></script>
+<script src="{% static 'js/bootstrap.min.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/canvasjs.min.js'%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/chart.css'%}">
 </head>
 <body>
 
@@ -29,13 +29,18 @@ Ultima modificacion: 3 de noviembre 2017. -->
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">Avanzómetro</a>
+      <a class="navbar-brand" href="/">Avanzómetro</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Inicio</a></li>
+      <li class="active"><a href="/">Inicio</a></li>
+      <li class="inactive"><a href="../grafico/form">Cambiar Filtros</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#"><span class="glyphicon glyphicon-user"></span>Cerrar Sesion</a></li>
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-user"></span>Cerrar Sesión {{ user.username }}</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-user"></span>Ingresar</a></li>
+      {% endif %}
     </ul>
   </div>
 </nav>
@@ -60,7 +65,7 @@ Ultima modificacion: 3 de noviembre 2017. -->
 		    title: "Estudiantes",
 		    suffix: '%',
 		    // minimun: 0,
-		    maximun: 100,
+		    maximum: 100,
 		    interval: 25
 		  },
 		  axisX: {

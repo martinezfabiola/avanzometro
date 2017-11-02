@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
+from .validator import validate_file_extension
 
 # Create your models here.
 
@@ -37,5 +38,5 @@ class Estudiante(models.Model):
 
 
 class Documento(models.Model):
-    documento = models.FileField()
+    documento = models.FileField(validators=[validate_file_extension])
     fecha = models.DateTimeField(auto_now_add=True)

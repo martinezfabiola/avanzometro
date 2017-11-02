@@ -15,17 +15,24 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from grafico.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
+from grafico import views as view
 from grafico import views
+from grafico.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^grafico/carga', views.cargarArchivo),
     url(r'^grafico/form', views.introducirDatos),
-    url(r'^grafico/chart', views.mostrarGrafico)
+    url(r'^grafico/chart', views.mostrarGrafico),
+    url(r'^$', views.cargarArchivo),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
+    url(r'^signup/$', view.signup, name='signup'),
 ]
 
 if settings.DEBUG:

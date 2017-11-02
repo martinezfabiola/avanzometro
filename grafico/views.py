@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.template.loader import render_to_string
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django import forms
 from .forms import *
 import csv
 from .models import *
+
+from grafico.forms import SignUpForm
 
 # Create your views here.
 
@@ -20,6 +28,29 @@ class cargarArchivo(TemplateView):
 
 
 """
+
+@login_required
+def home(request):
+    return render(request, 'registration/login.html')
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('../grafico/cargar')
+    else:
+        form = SignUpForm()
+
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
 def cargarArchivo(request):
 	if request.method == 'POST':
 		form = DocumentForm(request.POST, request.FILES)
@@ -31,7 +62,9 @@ def cargarArchivo(request):
 		form = DocumentForm()
 
 	return render(request, 'cargar.html', {'form':form})
-	
+
+
+@login_required	
 def introducirDatos(request):
 	template_name='form.html'
 	
@@ -115,6 +148,8 @@ def introducirDatos(request):
 
 	return render(request, 'form.html', {})
 
+
+@login_required
 def mostrarGrafico(request):
 	template_name='chart.html'
 
@@ -122,8 +157,14 @@ def mostrarGrafico(request):
 
 	carreraQuery = request.session['carreraQuery']
 
-	print(resultDic)
 
+	total = 0
+	for key in resultDic:
+		total += resultDic[key]
 
+	if total > 0:
+		for key in resultDic:
+			resultDic[key] = resultDic[key]*100//total
 
 	return render(request, 'chart.html', {'resultDic': resultDic, 'carreraQuery': carreraQuery})
+
