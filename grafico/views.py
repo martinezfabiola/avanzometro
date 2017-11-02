@@ -35,6 +35,9 @@ def cargarArchivo(request):
 def introducirDatos(request):
 	template_name='form.html'
 
+	#if request.method == 'POST':
+
+
 	archivo = Documento.objects.latest('id').documento.url[1:]
 	lector = csv.DictReader(open(archivo))
 
@@ -66,7 +69,7 @@ def introducirDatos(request):
 			nota = '-1'
 
 		if int(nota) < 3:
-			estado = "reprobado"
+			estado = "no aprobado"
 
 		else:
 			estado = "aprobado"

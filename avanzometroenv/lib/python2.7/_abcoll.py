@@ -1,1 +1,1 @@
-/usr/lib/python2.7/_abcoll.pyyys.pyl
+/usr/lib/python2.7/_abcoll.pyyys.py

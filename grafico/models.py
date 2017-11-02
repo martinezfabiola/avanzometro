@@ -13,9 +13,10 @@ class Asignatura(models.Model):
         db_table = 'asignatura'
 
 class Cursa(models.Model):
-    carnet = models.ForeignKey('Estudiante', models.CASCADE, db_column='carnet', primary_key=True)
-    codasig = models.ForeignKey('Asignatura', models.CASCADE, db_column='codasig', primary_key=True)
-    trimestre = models.DecimalField(max_digits=1, decimal_places=0, primary_key=True)
+    id = models.AutoField(primary_key=True, default = -1)
+    carnet = models.ForeignKey('Estudiante', models.CASCADE, db_column='carnet')
+    codasig = models.ForeignKey('Asignatura', models.CASCADE, db_column='codasig')
+    trimestre = models.DecimalField(max_digits=1, decimal_places=0)
     anio = models.DecimalField(max_digits=4, decimal_places=0)
     estado = models.CharField(max_length=10)
     nota = models.DecimalField(max_digits=1, decimal_places=0, blank=True, null=True)

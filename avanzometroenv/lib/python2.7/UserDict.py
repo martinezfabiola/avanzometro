@@ -1,1 +1,1 @@
-/usr/lib/python2.7/UserDict.pyys.pyl
+/usr/lib/python2.7/UserDict.pyys.py
