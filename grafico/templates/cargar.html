@@ -1,0 +1,86 @@
+<!-- Universidad Simon Bolivar
+Ingenieria de Software
+Integrantes:
+	Abelardo Salazar
+	Amanda Camacho
+	Fabiola Martinez
+	Lautaro Villalon
+	Luis Serrano
+	Maria Bracamonte
+	Yarima Luciani
+Descripcion: carga archivo excel.
+Ultima modificacion: 3 de noviembre 2017. -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cargar</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{%load static%}
+	<link rel="stylesheet" type="text/css" href="{% static 'carga.css'%}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+	<script src="{% static 'js/jquery.min.js'%}"></script>
+	<script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+</head>
+<body>
+
+<!-- Creamos navbar -->
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Avanzómetro</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/">Inicio</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-user"></span>Cerrar Sesión {{ user.username }}</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-user"></span>Ingresar</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<div class="row filas" id="filaTop">
+	<div class="col-sm-3 columnas"></div>
+	<div class="col-sm-6 columnas" id="colCarga">
+		<div class="row"></div>
+		<div id="filaCuadrado" class="row">
+			<form id="formCargar" class="form-group" method="POST" enctype="multipart/form-data">
+				{% csrf_token %} 
+				<p id="mensaje1">
+					<b>Seleccione un archivo .csv para cargar: </b>
+				</p>
+				    <!--<label class="btn btn-default btn-file">
+					Explorar <input name="Archivo" type="file" style="display: none;" onchange="checkfile(this); this.form.submit();">
+				</label>-->
+				{{form.as_p}}
+		</div>
+		<div id="submitFila" class="row">
+			<button id="botonCargar" type="submit">Enviar</button>
+		</div>
+		</form>
+	</div>
+	<div class="col-sm-3 columnas"></div>
+</div>
+
+<script type="text/javascript" language="javascript">
+	function checkfile(sender) {
+	    var validExts = new Array(".csv");
+	    var fileExt = sender.value;
+	    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+	    if (validExts.indexOf(fileExt) < 0) {
+	      alert("Extensión inválida, solo se aceptan archivos " +
+	               validExts.toString());
+	      return false;
+	    }
+	    else return true;
+	}
+</script>
+
+</body>
+</html>
