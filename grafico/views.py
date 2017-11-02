@@ -76,7 +76,10 @@ def introducirDatos(request):
 
 		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, estado, id ORDER BY sum;"
 
+		query0 = "SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, id;"
+		
 		resultado = Cursa.objects.raw(query)
+		resultado0 = Cursa.objects.raw(query0)
 
 		resultados = []
 		for r in resultado:
@@ -96,6 +99,18 @@ def introducirDatos(request):
 				break
 
 			i += 16
+
+
+		for rGeneral in resultado0:
+			esta = False
+			for rAprobado in resultado:
+				if rAprobado.carnet.carnet == rGeneral.carnet.carnet:
+					esta = True
+					break
+
+			if not esta:
+				resultDic[0] += 1
+
 
 		request.session['resultDic'] = resultDic
 		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
@@ -157,6 +172,7 @@ def mostrarGrafico(request):
 
 	carreraQuery = request.session['carreraQuery']
 
+	print(resultDic)
 
 	total = 0
 	for key in resultDic:
