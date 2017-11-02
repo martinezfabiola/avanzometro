@@ -34,9 +34,37 @@ def cargarArchivo(request):
 	
 def introducirDatos(request):
 	template_name='form.html'
+	
+	if request.method == 'POST':
+		cohorteQuery = request.POST['cohorteQuery']
+		trimQuery = request.POST['trimQuery']
+		anioQuery = request.POST['anioQuery']
+		carreraQuery = request.POST['carreraQuery']
 
-	#if request.method == 'POST':
+		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, estado, id ORDER BY sum;"
 
+		resultado = Cursa.objects.raw(query)
+
+		resultados = []
+		for r in resultado:
+			resultados.append(int(r.sum))
+
+		i = 0
+		resultDic = {}
+
+		while i <= 240:
+			resultDic[i] = 0
+
+			while len(resultados) != 0 and resultados[0] <= i:
+				resultDic[i] += 1
+				resultados.pop(0)
+
+			if len(resultados) == 0:
+				break
+
+			i += 16
+
+		return render(request, 'chart.html', resultDic)
 
 	archivo = Documento.objects.latest('id').documento.url[1:]
 	lector = csv.DictReader(open(archivo))
@@ -51,8 +79,10 @@ def introducirDatos(request):
 
 		nombre = entrada['nombre']
 
+		carrera = entrada['carrera']
+
 		if Estudiante.objects.filter(carnet=carnet).count() == 0:
-			Estudiante.objects.create(carnet=carnet, cohorte=int(cohorte), nombre=nombre)
+			Estudiante.objects.create(carnet=carnet, cohorte=int(cohorte), carrera=carrera, nombre=nombre)
 		# LLENAR ASIGNATURA
 
 		codasig = entrada['codasig']
@@ -69,7 +99,7 @@ def introducirDatos(request):
 			nota = '-1'
 
 		if int(nota) < 3:
-			estado = "no aprobado"
+			estado = "naprobado"
 
 		else:
 			estado = "aprobado"

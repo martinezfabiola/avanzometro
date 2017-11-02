@@ -29,6 +29,7 @@ class Cursa(models.Model):
 class Estudiante(models.Model):
     carnet = models.CharField(primary_key=True, max_length=7)
     cohorte = models.DecimalField(max_digits=4, decimal_places=0)
+    carrera = models.DecimalField(max_digits=4, decimal_places=0)
     nombre = models.CharField(max_length=60)
 
     class Meta:

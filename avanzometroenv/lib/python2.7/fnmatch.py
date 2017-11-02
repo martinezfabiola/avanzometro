@@ -1,1 +1,1 @@
-/usr/lib/python2.7/fnmatch.pyy
+/usr/lib/python2.7/fnmatch.pyym
