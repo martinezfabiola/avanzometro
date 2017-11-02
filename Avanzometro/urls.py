@@ -23,6 +23,8 @@ from django.conf.urls.static import static
 from grafico import views as view
 from grafico import views
 from grafico.views import *
+from grafico.forms import *
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -30,7 +32,7 @@ urlpatterns = [
     url(r'^grafico/form', views.introducirDatos),
     url(r'^grafico/chart', views.mostrarGrafico),
     url(r'^$', views.cargarArchivo),
-    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^login/$', auth_views.login, name="login") ,
     url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
     url(r'^signup/$', view.signup, name='signup'),
 ]

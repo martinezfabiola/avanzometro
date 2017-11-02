@@ -32,9 +32,9 @@
               {% if form.errors %}
                   <p style="color: red">Tu correo y contraseña no coincide. Vuelve a intentar.</p>
                 {% endif %}
-              <form id="login-form" method="post" action="." role="form" style="display: block;">
+              <form id="login-form" method="post" action="."" role="form" style="display: block;">
                 {% csrf_token %}
-                <h2>INGRESAR</h2>
+                <h2><b>Ingresar</b></h2>
                   <div class="form-group">
                   {% csrf_token %}
                     <input type="hidden" name="next" value="{{ next }}" />
@@ -69,10 +69,10 @@
         <div class="panel-heading">
           <div class="row">
             <div class="col-xs-6 tabs">
-              <a href="/login/" class="active" id="login-form-link"><div class="login">INGRESAR</div></a>
+              <a href="/login/" class="active" id="login-form-link"><div class="login">Ingreso</div></a>
             </div>
             <div class="col-xs-6 tabs">
-              <a href="/signup/" id="register-form-link"><div class="register">REGISTRARSE</div></a>
+              <a href="/signup/" id="register-form-link"><div class="register">Registro</div></a>
             </div>
           </div>
         </div>

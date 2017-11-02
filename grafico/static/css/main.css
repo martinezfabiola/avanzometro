@@ -30,13 +30,19 @@
 		  font-weight: 300;
 		}
 		.panel-login {
-			margin-top: 50px;
+			margin-top: 120px;
 		   border: none;
 		   background-color: #d2d6de;
 		  }
+
+		 .panel-register {
+		 	margin-top: 20px;
+		 } 
+
 		.panel-login .checkbox input[type=checkbox]{
 		  margin-left: 0px;
 		}
+
 		.panel-login .checkbox label {
 		  padding-left: 25px;
 		  font-weight: 300;
@@ -131,11 +137,11 @@
 		.panel-login>.panel-heading a#register-form-link {
 		  color: #fff;
 		  width: 100%;
-		  text-align: right;
+		  text-align: center;
 		}
 		.panel-login>.panel-heading a#login-form-link {
 		  width: 100%;
-		  text-align: left;
+		  text-align: center;
 		}
 
 		.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
@@ -167,7 +173,6 @@
 		  height: auto;
 		  font-weight: normal;
 		  padding: 14px 0;
-		  text-transform: uppercase;
 		  border: none;
 		  border-radius: 5px;
 		  box-shadow: none;
@@ -195,9 +200,8 @@
 		  height: auto;
 		  font-weight: normal;
 		  padding: 14px 0;
-		  text-transform: uppercase;
 		  border: none;
-		  border-radius: 0px;
+		  border-radius: 5px;
 		  box-shadow: none;
 		}
 		.btn-register:hover,
@@ -207,4 +211,13 @@
 		}
 		#id_username, #id_password, #id_first_name, #id_last_name, #id_password1, #id_password2, #id_correo{
 			width: 350px;
+		}
+
+		#tituloRegister {
+			text-align: center;
+		}
+
+		#register-form{
+			padding-right: 50px;
+			padding-left: 50px;
 		}

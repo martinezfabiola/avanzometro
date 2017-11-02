@@ -29,9 +29,10 @@ class cargarArchivo(TemplateView):
 
 """
 
-@login_required
+"""@login_required
 def home(request):
-    return render(request, 'registration/login.html')
+
+	return redirect('../login')"""
 
 
 def signup(request):
