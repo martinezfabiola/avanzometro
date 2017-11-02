@@ -61,4 +61,18 @@ ALTER TABLE CURSA ADD
 SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = '2013' GROUP BY cursa.carnet, estado, id
 
 
-SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = '2012' AND estudiante.carrera = '0800' AND cursa.anio <= 2013 AND (cursa.anio < 2013 OR cursa.trimestre <=3) GROUP BY cursa.carnet, estado, id ORDER BY sum;
+SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = '2014' AND estudiante.carrera = '1700' AND cursa.anio <= 2015 AND (cursa.anio < 2015 OR cursa.trimestre <=4) GROUP BY cursa.carnet, estado, id ORDER BY sum;
+
+SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, id;
+
+
+SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = 2014 AND estudiante.carrera = 1700 AND cursa.anio <= 2015 AND (cursa.anio < 2015 OR cursa.trimestre <= 4) GROUP BY cursa.carnet, id;
+
+
+
+
+
+
+
+
+
