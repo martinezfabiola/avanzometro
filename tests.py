@@ -154,15 +154,29 @@ class TestRegister(TestCase):
                 })
         self.assertEquals(User.objects.count(),0 )
 
-    #MALICIA: correo incompleto y contiene un solo punto 
+    #MALICIA: correo incompleto  contiene un solo punto 
 
     def test_email_imcomplete(self):
         response = self.cliente.post('/signup', 
         data = { 'first_name': 'Lautaro','last_name': 'Villalon',
-                'username': 'laucv.', 'password1': 'm123',
-                'password2': 'm123'
+                'username': 'laucv.', 'password1': 'mipassword123',
+                'password2': 'mipassword123'
                 })
         self.assertEquals(User.objects.count(),0 )
+
+
+    #MALICIA: contraseñas diferentes
+
+    def test_diferents_password(self):
+            response = self.cliente.post('/signup', 
+            data = { 'first_name': 'Lautaro','last_name': 'Villalon',
+                    'username': 'laucv.', 'password1': 'mipassword123',
+                    'password2': 'mipassword456'
+                    })
+            self.assertEquals(User.objects.count(),0 )
+
+
+
     
 
 
