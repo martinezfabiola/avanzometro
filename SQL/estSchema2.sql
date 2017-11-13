@@ -29,11 +29,10 @@ CREATE TABLE CURSA(
         id INTEGER NOT NULL,
         carnet VARCHAR(7) NOT NULL,
         codasig CHAR(6) NOT NULL,
-        trimestre NUMERIC(1) NOT NULL,
-        anio NUMERIC(4) NOT NULL,
+        trimestre NUMERIC(2) NOT NULL,
         estado VARCHAR(10) NOT NULL, 
         nota NUMERIC(1) NOT NULL,
-        CONSTRAINT PK_CURSA PRIMARY KEY (carnet,codasig,trimestre,anio)
+        CONSTRAINT PK_CURSA PRIMARY KEY (carnet,codasig,trimestre)
 );
 
 CREATE TABLE ASIGNATURA(

@@ -19,8 +19,10 @@ from django import forms
 from .forms import *
 import csv
 from .models import *
+from django.http import JsonResponse
 
 from grafico.forms import SignUpForm
+import json
 
 # Create your views here.
 
@@ -61,47 +63,12 @@ def introducirDatos(request):
 	
 	if request.method == 'POST':
 		cohorteQuery = request.POST['cohorteQuery']
-		trimQuery = request.POST['trimQuery']
-		anioQuery = request.POST['anioQuery']
 		carreraQuery = request.POST['carreraQuery'][:4]
 
-		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, estado, id ORDER BY sum;"
-
-		query0 = "SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.anio <= "+anioQuery+" AND (cursa.anio < "+anioQuery+" OR cursa.trimestre <= "+trimQuery+") GROUP BY cursa.carnet, id;"
-		
-		resultado = Cursa.objects.raw(query)
-		resultado0 = Cursa.objects.raw(query0)
-
-		resultados = []
-		for r in resultado:
-			resultados.append(int(r.sum))
-
-		i = 0
 		resultDic = {}
 
-		while i <= 240:
-			resultDic[i] = 0
-
-			while len(resultados) != 0 and resultados[0] <= i:
-				resultDic[i] += 1
-				resultados.pop(0)
-
-			if len(resultados) == 0:
-				break
-
-			i += 16
-
-
-		for rGeneral in resultado0:
-			esta = False
-			for rAprobado in resultado:
-				if rAprobado.carnet.carnet == rGeneral.carnet.carnet:
-					esta = True
-					break
-
-			if not esta:
-				resultDic[0] += 1
-
+		for i in range(1, 16):
+			resultDic[i] = hacerQuery(cohorteQuery, str(i), carreraQuery)
 
 		request.session['resultDic'] = resultDic
 		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
@@ -139,7 +106,6 @@ def introducirDatos(request):
 			Asignatura.objects.create(codasig=codasig, nomasig=nomasig, creditos=int(creditos))
 		#LLENAR CURSA
 		trimestre = entrada['trimestre']
-		anio = entrada['anio']
 		nota = entrada['nota']
 		if nota == 'R':
 			nota = '-1'
@@ -150,7 +116,7 @@ def introducirDatos(request):
 		else:
 			estado = "aprobado"
 
-		Cursa.objects.create(carnet=Estudiante.objects.filter(carnet=carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre), anio=int(anio), estado=estado, nota=int(nota))
+		Cursa.objects.create(carnet=Estudiante.objects.filter(carnet=carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre), estado=estado, nota=int(nota))
 
 	return render(request, 'form.html', {})
 
@@ -165,13 +131,57 @@ def mostrarGrafico(request):
 
 	print(resultDic)
 
-	total = 0
-	for key in resultDic:
-		total += resultDic[key]
+	jsonDic = json.dumps(resultDic)
 
-	if total > 0:
+	return render(request, 'chart.html', {'resultDic': jsonDic, 'carreraQuery': carreraQuery})
+
+
+# FUNCION PARA QUERY
+def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
+
+		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, estado, id ORDER BY sum;"
+
+		query0 = "SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+"  AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, id;"
+		
+		resultado = Cursa.objects.raw(query)
+		resultado0 = Cursa.objects.raw(query0)
+
+		resultados = []
+		for r in resultado:
+			resultados.append(int(r.sum))
+
+		i = 0
+		resultDic = {}
+
+		while i <= 240:
+			resultDic[i] = 0
+
+			while len(resultados) != 0 and resultados[0] <= i:
+				resultDic[i] += 1
+				resultados.pop(0)
+
+			#if len(resultados) == 0:
+			#	break
+
+			i += 16
+
+
+		for rGeneral in resultado0:
+			esta = False
+			for rAprobado in resultado:
+				if rAprobado.carnet.carnet == rGeneral.carnet.carnet:
+					esta = True
+					break
+
+			if not esta:
+				resultDic[0] += 1
+
+		total = 0
 		for key in resultDic:
-			resultDic[key] = resultDic[key]*100//total
+			total += resultDic[key]
 
-	return render(request, 'chart.html', {'resultDic': resultDic, 'carreraQuery': carreraQuery})
+		if total > 0:
+			for key in resultDic:
+				resultDic[key] = resultDic[key]*100//total
 
+		return resultDic
