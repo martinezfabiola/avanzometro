@@ -1,1 +1,1 @@
-/usr/lib/python2.7/sre_constants.pyl
+/usr/lib/python2.7/sre_constants.pyll

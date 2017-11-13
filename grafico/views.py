@@ -65,13 +65,42 @@ def introducirDatos(request):
 		cohorteQuery = request.POST['cohorteQuery']
 		carreraQuery = request.POST['carreraQuery'][:4]
 
+
 		resultDic = {}
+		resultDic2 = {}
+		resultDic3 = {}
+		resultDic4 = {}
 
 		for i in range(1, 16):
 			resultDic[i] = hacerQuery(cohorteQuery, str(i), carreraQuery)
 
+		if request.POST['cohorteQuery2'] != "":
+
+			for i in range(1, 16):
+				resultDic2[i] = hacerQuery(request.POST['cohorteQuery2'], str(i), carreraQuery)
+
+		if request.POST['cohorteQuery3'] != "":
+
+			for i in range(1, 16):
+				resultDic3[i] = hacerQuery(request.POST['cohorteQuery3'], str(i), carreraQuery)
+
+		if request.POST['cohorteQuery4'] != "":
+
+			for i in range(1, 16):
+				resultDic4[i] = hacerQuery(request.POST['cohorteQuery4'], str(i), carreraQuery)
+
 		request.session['resultDic'] = resultDic
+		request.session['resultDic2'] = resultDic2
+		request.session['resultDic3'] = resultDic3
+		request.session['resultDic4'] = resultDic4
+
+		request.session['cohorteQuery'] = cohorteQuery
+		request.session['cohorteQuery2'] = request.POST['cohorteQuery2']
+		request.session['cohorteQuery3'] = request.POST['cohorteQuery3']
+		request.session['cohorteQuery4'] = request.POST['cohorteQuery4']
+
 		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
+
 
 		return redirect('/grafico/chart')
 
@@ -124,16 +153,21 @@ def introducirDatos(request):
 @login_required
 def mostrarGrafico(request):
 	template_name='chart.html'
-
-	resultDic = request.session['resultDic']
-
 	carreraQuery = request.session['carreraQuery']
 
-	print(resultDic)
+	cohorteQuery = request.session['cohorteQuery']
+	cohorteQuery2 = request.session['cohorteQuery2']
+	cohorteQuery3 = request.session['cohorteQuery3']
+	cohorteQuery4 = request.session['cohorteQuery4']
 
-	jsonDic = json.dumps(resultDic)
+	print(request.session['resultDic2'])
 
-	return render(request, 'chart.html', {'resultDic': jsonDic, 'carreraQuery': carreraQuery})
+	jsonDic = json.dumps(request.session['resultDic'])
+	jsonDic2 = json.dumps(request.session['resultDic2'])
+	jsonDic3 = json.dumps(request.session['resultDic3'])
+	jsonDic4 = json.dumps(request.session['resultDic4'])
+
+	return render(request, 'chart.html', {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3, 'resultDic4': jsonDic4, 'carreraQuery': carreraQuery, 'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2, 'cohorteQuery3': cohorteQuery3, 'cohorteQuery4': cohorteQuery4})
 
 
 # FUNCION PARA QUERY

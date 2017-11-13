@@ -54,8 +54,11 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		window.onload = function () {
 
 		var resultDic = JSON.parse('{{ resultDic | escapejs }}')
+		var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}')
+		var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}')
+		var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}')
 
-		CanvasJS.addColorSet("greenShades",["#48D1CC"]);
+		CanvasJS.addColorSet("greenShades",["#48D1CC", "#FF8C00", "#3CB371", "#7B68EE"]);
 
 		var chart = new CanvasJS.Chart("chartContainer", {
 		  colorSet: "greenShades",
@@ -78,11 +81,13 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		    // maximun: 250,
 		    // interval: 16
 		  },
+		  //Opcion 1 Cohorte
 		  data: [{        
-		    type: "column",  
+		    type: "column",
+		    axisXindex: 0,  
 		    showInLegend: true, 
 		    legendMarkerColor: "#48D1CC",
-		    legendText: "{{ carreraQuery }}",
+		    legendText: "{{ cohorteQuery }}",
 		    dataPoints: [ 
 		      	{ y: resultDic['1']['0'], label: "0"},
 		      	{ y: resultDic['1']['16'], label: "1-16"},
@@ -100,40 +105,133 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		      	{ y: resultDic['1']['208'], label: "193-208"}, 
 		      	{ y: resultDic['1']['224'], label: "209-224"}, 
 		      	{ y: resultDic['1']['240'], label: "225-240"},
+		    ]}
+
+		  //Opcion 2 Cohorte   
+		  {% if resultDic2 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#FF8C00",
+		    legendText: "{{ cohorteQuery2 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic2['1']['0'], label: "0"},
+		      	{ y: resultDic2['1']['16'], label: "1-16"},
+		      	{ y: resultDic2['1']['32'], label: "17-32"},
+		      	{ y: resultDic2['1']['48'], label: "33-48"},
+		      	{ y: resultDic2['1']['64'], label: "49-64"},
+		      	{ y: resultDic2['1']['80'], label: "65-80"},
+		      	{ y: resultDic2['1']['96'], label: "81-96"}, 
+		      	{ y: resultDic2['1']['112'], label: "97-112"}, 
+		      	{ y: resultDic2['1']['128'], label: "113-128"}, 
+		      	{ y: resultDic2['1']['144'], label: "129-144"}, 
+		      	{ y: resultDic2['1']['160'], label: "145-160"}, 
+		      	{ y: resultDic2['1']['176'], label: "161-176"}, 
+		      	{ y: resultDic2['1']['192'], label: "177-192"},
+		      	{ y: resultDic2['1']['208'], label: "193-208"}, 
+		      	{ y: resultDic2['1']['224'], label: "209-224"}, 
+		      	{ y: resultDic2['1']['240'], label: "225-240"},
 		    ]
-		  }]
+		  }
+		  {% endif %}
+
+		  //Opcion 3 Cohorte   
+		  {% if resultDic3 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#3CB371",
+		    legendText: "{{ cohorteQuery3 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic3['1']['0'], label: "0"},
+		      	{ y: resultDic3['1']['16'], label: "1-16"},
+		      	{ y: resultDic3['1']['32'], label: "17-32"},
+		      	{ y: resultDic3['1']['48'], label: "33-48"},
+		      	{ y: resultDic3['1']['64'], label: "49-64"},
+		      	{ y: resultDic3['1']['80'], label: "65-80"},
+		      	{ y: resultDic3['1']['96'], label: "81-96"}, 
+		      	{ y: resultDic3['1']['112'], label: "97-112"}, 
+		      	{ y: resultDic3['1']['128'], label: "113-128"}, 
+		      	{ y: resultDic3['1']['144'], label: "129-144"}, 
+		      	{ y: resultDic3['1']['160'], label: "145-160"}, 
+		      	{ y: resultDic3['1']['176'], label: "161-176"}, 
+		      	{ y: resultDic3['1']['192'], label: "177-192"},
+		      	{ y: resultDic3['1']['208'], label: "193-208"}, 
+		      	{ y: resultDic3['1']['224'], label: "209-224"}, 
+		      	{ y: resultDic3['1']['240'], label: "225-240"},
+		    ]
+		  }
+		  {% endif %}
+
+		  //Opcion 2 Cohorte   
+		  {% if resultDic4 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#7B68EE",
+		    legendText: "{{ cohorteQuery4 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic4['1']['0'], label: "0"},
+		      	{ y: resultDic4['1']['16'], label: "1-16"},
+		      	{ y: resultDic4['1']['32'], label: "17-32"},
+		      	{ y: resultDic4['1']['48'], label: "33-48"},
+		      	{ y: resultDic4['1']['64'], label: "49-64"},
+		      	{ y: resultDic4['1']['80'], label: "65-80"},
+		      	{ y: resultDic4['1']['96'], label: "81-96"}, 
+		      	{ y: resultDic4['1']['112'], label: "97-112"}, 
+		      	{ y: resultDic4['1']['128'], label: "113-128"}, 
+		      	{ y: resultDic4['1']['144'], label: "129-144"}, 
+		      	{ y: resultDic4['1']['160'], label: "145-160"}, 
+		      	{ y: resultDic4['1']['176'], label: "161-176"}, 
+		      	{ y: resultDic4['1']['192'], label: "177-192"},
+		      	{ y: resultDic4['1']['208'], label: "193-208"}, 
+		      	{ y: resultDic4['1']['224'], label: "209-224"}, 
+		      	{ y: resultDic4['1']['240'], label: "225-240"},
+		    ]
+		  }
+		  {% endif %}
+		  ]
+
+
 		});
 		chart.render();
 		}
 	</script>
-	<div id="chartContainer" style="height: 350px; width: 100%;"></div>
+	<div id="chartContainer" style="height: 400px; width: 100%;"></div>
 
 
 </div>
 </div>
-<div class="row">
-
+<div class="row" id="controles">
+	<div class="col-sm-6">
+	</div>
 	<!-- Slider de trimestres -->
 	<div id="slidecontainer" class="col-sm-6">
-	  <input type="range" min="1" max="15" value="1" class="slider" id="myRange">
-	  <p>Trimestre: <span id="demo"></span></p>
+	  <input type="range" min="1" max="15" value="1" class="slider" id="myRange" selected>
+	  <p>Trimestre: <span id="demo"></span><button id="botoncito">Hola</button></p>
 	</div>
 
 	<script>
 	var slider = document.getElementById("myRange");
 	var output = document.getElementById("demo");
+	var boton = document.getElementById("botoncito");
 	output.innerHTML = slider.value;
 
-	slider.oninput = function () {
+
+
+	slider.oninput = function() {
 		output.innerHTML = this.value;
 
 		var resultDic = JSON.parse('{{ resultDic | escapejs }}')
+		var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}')
+		var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}')
+		var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}')
 
-		CanvasJS.addColorSet("greenShades",["#48D1CC"]);
+		CanvasJS.addColorSet("greenShades",["#48D1CC", "#FF8C00", "#3CB371", "#7B68EE"]);
 
 		var chart = new CanvasJS.Chart("chartContainer", {
 		  colorSet: "greenShades",
-		  animationEnabled: true,
+		  //animationEnabled: true,
 		  // theme: "light1", // "light1", "light2", "dark1", "dark2"
 		  title:{
 		    text: "Avanzómetro"
@@ -156,7 +254,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		    type: "column",  
 		    showInLegend: true, 
 		    legendMarkerColor: "#48D1CC",
-		    legendText: "{{ carreraQuery }}",
+		    legendText: "{{ cohorteQuery }}",
 		    dataPoints: [ 
 		      	{ y: resultDic[this.value]['0'], label: "0"},
 		      	{ y: resultDic[this.value]['16'], label: "1-16"},
@@ -175,7 +273,95 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		      	{ y: resultDic[this.value]['224'], label: "209-224"}, 
 		      	{ y: resultDic[this.value]['240'], label: "225-240"},
 		    ]
-		  }]
+		  }
+
+		  //Opcion 2 Cohorte   
+		  {% if resultDic2 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#FF8C00",
+		    legendText: "{{ cohorteQuery2 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic2[this.value]['0'], label: "0"},
+		      	{ y: resultDic2[this.value]['16'], label: "1-16"},
+		      	{ y: resultDic2[this.value]['32'], label: "17-32"},
+		      	{ y: resultDic2[this.value]['48'], label: "33-48"},
+		      	{ y: resultDic2[this.value]['64'], label: "49-64"},
+		      	{ y: resultDic2[this.value]['80'], label: "65-80"},
+		      	{ y: resultDic2[this.value]['96'], label: "81-96"}, 
+		      	{ y: resultDic2[this.value]['112'], label: "97-112"}, 
+		      	{ y: resultDic2[this.value]['128'], label: "113-128"}, 
+		      	{ y: resultDic2[this.value]['144'], label: "129-144"}, 
+		      	{ y: resultDic2[this.value]['160'], label: "145-160"}, 
+		      	{ y: resultDic2[this.value]['176'], label: "161-176"}, 
+		      	{ y: resultDic2[this.value]['192'], label: "177-192"},
+		      	{ y: resultDic2[this.value]['208'], label: "193-208"}, 
+		      	{ y: resultDic2[this.value]['224'], label: "209-224"}, 
+		      	{ y: resultDic2[this.value]['240'], label: "225-240"},
+		    ]
+		  }
+		  {% endif %}
+
+		  //Opcion 3 Cohorte   
+		  {% if resultDic3 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#3CB371",
+		    legendText: "{{ cohorteQuery3 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic3[this.value]['0'], label: "0"},
+		      	{ y: resultDic3[this.value]['16'], label: "1-16"},
+		      	{ y: resultDic3[this.value]['32'], label: "17-32"},
+		      	{ y: resultDic3[this.value]['48'], label: "33-48"},
+		      	{ y: resultDic3[this.value]['64'], label: "49-64"},
+		      	{ y: resultDic3[this.value]['80'], label: "65-80"},
+		      	{ y: resultDic3[this.value]['96'], label: "81-96"}, 
+		      	{ y: resultDic3[this.value]['112'], label: "97-112"}, 
+		      	{ y: resultDic3[this.value]['128'], label: "113-128"}, 
+		      	{ y: resultDic3[this.value]['144'], label: "129-144"}, 
+		      	{ y: resultDic3[this.value]['160'], label: "145-160"}, 
+		      	{ y: resultDic3[this.value]['176'], label: "161-176"}, 
+		      	{ y: resultDic3[this.value]['192'], label: "177-192"},
+		      	{ y: resultDic3[this.value]['208'], label: "193-208"}, 
+		      	{ y: resultDic3[this.value]['224'], label: "209-224"}, 
+		      	{ y: resultDic3[this.value]['240'], label: "225-240"},
+		    ]
+		  }
+		  {% endif %}
+
+		  //Opcion 2 Cohorte   
+		  {% if resultDic4 != "{}" %}
+		    ,{type: "column",
+		    axisXindex: 1,  
+		    showInLegend: true, 
+		    legendMarkerColor: "#7B68EE",
+		    legendText: "{{ cohorteQuery4 }}",
+		    dataPoints: [ 
+		      	{ y: resultDic4[this.value]['0'], label: "0"},
+		      	{ y: resultDic4[this.value]['16'], label: "1-16"},
+		      	{ y: resultDic4[this.value]['32'], label: "17-32"},
+		      	{ y: resultDic4[this.value]['48'], label: "33-48"},
+		      	{ y: resultDic4[this.value]['64'], label: "49-64"},
+		      	{ y: resultDic4[this.value]['80'], label: "65-80"},
+		      	{ y: resultDic4[this.value]['96'], label: "81-96"}, 
+		      	{ y: resultDic4[this.value]['112'], label: "97-112"}, 
+		      	{ y: resultDic4[this.value]['128'], label: "113-128"}, 
+		      	{ y: resultDic4[this.value]['144'], label: "129-144"}, 
+		      	{ y: resultDic4[this.value]['160'], label: "145-160"}, 
+		      	{ y: resultDic4[this.value]['176'], label: "161-176"}, 
+		      	{ y: resultDic4[this.value]['192'], label: "177-192"},
+		      	{ y: resultDic4[this.value]['208'], label: "193-208"}, 
+		      	{ y: resultDic4[this.value]['224'], label: "209-224"}, 
+		      	{ y: resultDic4[this.value]['240'], label: "225-240"},
+		    ]
+		  }
+		  {% endif %}
+
+
+
+		  ]
 		});
 		chart.render();
 		}

@@ -55,10 +55,32 @@ Ultima modificacion: 2 de noviembre 2017. -->
 				<form id="datosUsuario" method="POST" enctype="multipart/form-data"> 
 					{% csrf_token %}
 
+					<!-- Opcion 1 Cohorte -->
 					<div class="form-group">
-						<label for="numericInput2">Cohorte:</label>
+						<label for="numericInput1">1. Cohorte:</label>
 						<br>
-						<input id="numericInput2" class="form-control" type="number" name="cohorteQuery" min="1967" max="2017" required>
+						<input id="numericInput1" class="form-control" type="number" name="cohorteQuery" min="1967" max="2017" required>
+					</div>
+
+					<!-- Opcion 2 Cohorte -->
+					<div class="form-group">
+						<label for="numericInput2">2. Cohorte:</label>
+						<br>
+						<input id="numericInput2" class="form-control" type="number" name="cohorteQuery2" min="1967" max="2017">
+					</div>
+
+					<!-- Opcion 3 Cohorte -->
+					<div class="form-group">
+						<label for="numericInput3">3. Cohorte:</label>
+						<br>
+						<input id="numericInput3" class="form-control" type="number" name="cohorteQuery3" min="1967" max="2017">
+					</div>
+
+					<!-- Opcion 4 Cohorte -->
+					<div class="form-group">
+						<label for="numericInput4">4. Cohorte:</label>
+						<br>
+						<input id="numericInput4" class="form-control" type="number" name="cohorteQuery4" min="1967" max="2017">
 					</div>
 
 					<div class="form-group">
