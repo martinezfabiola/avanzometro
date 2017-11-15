@@ -49,42 +49,50 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			<div class="row"></div>
 			<div id="cuadrado" class="row">
 				<p id="mensaje">
-					<b>Ingresa los datos para visualizar la gráfica</b>
+					<b>Ingrese los datos para visualizar la gráfica</b>
 				</p>
 
 				<form id="datosUsuario" method="POST" enctype="multipart/form-data"> 
 					{% csrf_token %}
 
+					<p id="mensaje1">
+						<b>Ingrese las cohortes que desea comparar: </b>
+					</p>
+
 					<!-- Opcion 1 Cohorte -->
 					<div class="form-group">
-						<label for="numericInput1">1. Cohorte:</label>
+						<label for="numericInput1">Cohorte 1*:</label>
 						<br>
 						<input id="numericInput1" class="form-control" type="number" name="cohorteQuery" min="1967" max="2017" required>
 					</div>
 
 					<!-- Opcion 2 Cohorte -->
 					<div class="form-group">
-						<label for="numericInput2">2. Cohorte:</label>
+						<label for="numericInput2">Cohorte 2:</label>
 						<br>
 						<input id="numericInput2" class="form-control" type="number" name="cohorteQuery2" min="1967" max="2017">
 					</div>
 
 					<!-- Opcion 3 Cohorte -->
 					<div class="form-group">
-						<label for="numericInput3">3. Cohorte:</label>
+						<label for="numericInput3">Cohorte 3:</label>
 						<br>
 						<input id="numericInput3" class="form-control" type="number" name="cohorteQuery3" min="1967" max="2017">
 					</div>
 
 					<!-- Opcion 4 Cohorte -->
 					<div class="form-group">
-						<label for="numericInput4">4. Cohorte:</label>
+						<label for="numericInput4">Cohorte 4:</label>
 						<br>
 						<input id="numericInput4" class="form-control" type="number" name="cohorteQuery4" min="1967" max="2017">
 					</div>
 
+					<p id="mensaje2">
+						<b>Ingrese una carrera: </b>
+					</p>
+
 					<div class="form-group">
-						<label for="dropdown">Carrera:</label>
+						<label for="dropdown">Carrera*:</label>
 						<select class="form-control" id="dropdown" name="carreraQuery" required>
 				        <option value="0100Ing. Eléctrica">Ing. Eléctrica</option>
 				        <option value="0200Ing. Mecánica">Ing. Mecánica</option>
@@ -118,6 +126,10 @@ Ultima modificacion: 2 de noviembre 2017. -->
 				        <option value="0010Administración Aduanera">Administración Aduanera</option>
 				      </select>
 					</div>
+
+					<p id="mensaje3">
+						<b>*datos obligatorios</b>
+					</p>
 					
 			</div>
 

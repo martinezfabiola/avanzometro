@@ -160,7 +160,7 @@ def mostrarGrafico(request):
 	cohorteQuery3 = request.session['cohorteQuery3']
 	cohorteQuery4 = request.session['cohorteQuery4']
 
-	print(request.session['resultDic2'])
+	#print(request.session['resultDic4'])
 
 	jsonDic = json.dumps(request.session['resultDic'])
 	jsonDic2 = json.dumps(request.session['resultDic2'])
@@ -187,17 +187,24 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 		i = 0
 		resultDic = {}
 
-		while i <= 240:
+		while i <= 256:
 			resultDic[i] = 0
 
-			while len(resultados) != 0 and resultados[0] <= i:
-				resultDic[i] += 1
-				resultados.pop(0)
+			if (i>240):
+				while len(resultados) != 0:
+					print(resultados[0])
+					resultDic[i] += 1
+					resultados.pop(0)	
+			else:
+				while len(resultados) != 0 and resultados[0] <= i:
+					resultDic[i] += 1
+					resultados.pop(0)
 
 			#if len(resultados) == 0:
 			#	break
 
 			i += 16
+
 
 
 		for rGeneral in resultado0:

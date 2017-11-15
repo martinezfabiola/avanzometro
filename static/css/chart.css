@@ -3,7 +3,8 @@
 }
 
 #slidecontainer {
-    margin-left: 5%;
+    margin-top: 3.7%;
+    margin-left: -4%;
     text-align: center;
     width: 40%;
 }
@@ -28,17 +29,30 @@
     appearance: none;
     width: 25px;
     height: 25px;
-    background: #4CAF50;
+    background: #222;
     cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
-    background: #4CAF50;
+    background: #222;
     cursor: pointer;
 }
 
 #controles {
     padding-top: 40px;
+}
+
+#botones {
+    margin: 7.2% 0 0 30% !important;
+}
+
+.btn-sm {
+    background-color: #d2d6de;
+}
+
+#numeroTiempo {
+    width:50px;
+    height:19px;
 }
