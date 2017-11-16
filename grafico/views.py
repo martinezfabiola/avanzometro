@@ -45,11 +45,15 @@ def signup(request):
 
 @login_required
 def cargarArchivo(request):
+	# SI RECIBIMOS EL ARCHIVO POR POST, LO GUARDAMOS Y VAMOS A FORM
+
 	if request.method == 'POST':
 		form = DocumentForm(request.POST, request.FILES)
 		if form.is_valid():
 			form.save()
 			return redirect('/grafico/form')
+
+	# SI ACABAMOS DE ABRIR LA VENTANA, MOSTRAMOS LA CARGA DEL ARCHIVO.
 
 	else:
 		form = DocumentForm()
@@ -60,56 +64,80 @@ def cargarArchivo(request):
 @login_required	
 def introducirDatos(request):
 	template_name='form.html'
+
+	# SI RECIBIMOS LOS DATOS DEL FORMULARIO:
 	
 	if request.method == 'POST':
 		cohorteQuery = request.POST['cohorteQuery']
 		carreraQuery = request.POST['carreraQuery'][:4]
 
+		# DICCIONARIOS DE LOS 15 QUERIES PARA COHORTE
 
 		resultDic = {}
 		resultDic2 = {}
 		resultDic3 = {}
 		resultDic4 = {}
 
+		# COHORTE 1 (OBLIGATORIA): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
 		for i in range(1, 16):
 			resultDic[i] = hacerQuery(cohorteQuery, str(i), carreraQuery)
+
+		# COHORTE 2 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
 
 		if request.POST['cohorteQuery2'] != "":
 
 			for i in range(1, 16):
 				resultDic2[i] = hacerQuery(request.POST['cohorteQuery2'], str(i), carreraQuery)
 
+		# COHORTE 3 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
 		if request.POST['cohorteQuery3'] != "":
 
 			for i in range(1, 16):
 				resultDic3[i] = hacerQuery(request.POST['cohorteQuery3'], str(i), carreraQuery)
+
+		# COHORTE 4 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
 
 		if request.POST['cohorteQuery4'] != "":
 
 			for i in range(1, 16):
 				resultDic4[i] = hacerQuery(request.POST['cohorteQuery4'], str(i), carreraQuery)
 
+		# GUARDAMOS LOS CUATRO DICCIONARIOS POR CADA COHORTE EN LA SESION
+
 		request.session['resultDic'] = resultDic
 		request.session['resultDic2'] = resultDic2
 		request.session['resultDic3'] = resultDic3
 		request.session['resultDic4'] = resultDic4
+
+		# GUARDAMOS LAS CUATRO COHORTES EN LA SESION
 
 		request.session['cohorteQuery'] = cohorteQuery
 		request.session['cohorteQuery2'] = request.POST['cohorteQuery2']
 		request.session['cohorteQuery3'] = request.POST['cohorteQuery3']
 		request.session['cohorteQuery4'] = request.POST['cohorteQuery4']
 
+		# GUARDAMOS EL NOMBRE DE LA CARRERA EN LA SESION
+
 		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
 
+		# ENVIAMOS AL GRAFICO
 
 		return redirect('/grafico/chart')
+
+	# ELIMINAMOS DATOS VIEJOS DE LA BASE DE DATOS
 
 	Cursa.objects.all().delete()
 	Asignatura.objects.all().delete()
 	Estudiante.objects.all().delete()
 
+	# LEEMOS EL ARCHIVO
+
 	archivo = Documento.objects.latest('id').documento.url[1:]
 	lector = csv.DictReader(open(archivo))
+
+	#-- CARGA DE BASE DE DATOS
 
 	for entrada in lector:
 		# LLENAR ESTUDIANTE
@@ -147,12 +175,19 @@ def introducirDatos(request):
 
 		Cursa.objects.create(carnet=Estudiante.objects.filter(carnet=carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre), estado=estado, nota=int(nota))
 
+	#-- FIN DE CARGA DE BASE DE DATOS
+
+	# MOSTRAMOS FORMULARIO
+
 	return render(request, 'form.html', {})
 
 
 @login_required
 def mostrarGrafico(request):
 	template_name='chart.html'
+
+	# OBTENEMOS LOS DICCIONARIOS DE DATOS DE LAS CUATRO COHORTES
+
 	carreraQuery = request.session['carreraQuery']
 
 	cohorteQuery = request.session['cohorteQuery']
@@ -160,12 +195,14 @@ def mostrarGrafico(request):
 	cohorteQuery3 = request.session['cohorteQuery3']
 	cohorteQuery4 = request.session['cohorteQuery4']
 
-	#print(request.session['resultDic4'])
+	# CONVERTIMOS LOS DICCIONARIOS EN STRINGS COMPATIBLES CON VARIABLES JSON DE JavaScript
 
 	jsonDic = json.dumps(request.session['resultDic'])
 	jsonDic2 = json.dumps(request.session['resultDic2'])
 	jsonDic3 = json.dumps(request.session['resultDic3'])
 	jsonDic4 = json.dumps(request.session['resultDic4'])
+
+	# ENVIAMOS TODAS LAS VARIABLES AL GRAFICO
 
 	return render(request, 'chart.html', {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3, 'resultDic4': jsonDic4, 'carreraQuery': carreraQuery, 'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2, 'cohorteQuery3': cohorteQuery3, 'cohorteQuery4': cohorteQuery4})
 
@@ -173,12 +210,20 @@ def mostrarGrafico(request):
 # FUNCION PARA QUERY
 def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 
+		# QUERY ESPECIFICO POR COHORTE, TRIMESTRE Y CARRERA
+
 		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, estado, id ORDER BY sum;"
+
+		# QUERY GENERICO PARA CALCULAR LA CANTIDAD QUE TIENE 0 CREDITOS APROBADOS
 
 		query0 = "SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+"  AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, id;"
 		
+		# REALIZAMOS EL QUERY
+
 		resultado = Cursa.objects.raw(query)
 		resultado0 = Cursa.objects.raw(query0)
+
+		#-- GUARDAR DATOS ORDENADOS
 
 		resultados = []
 		for r in resultado:
@@ -187,12 +232,15 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 		i = 0
 		resultDic = {}
 
+		#-- FIN DE GUARDAR DATOS ORDENADOS
+
+		#-- CALCULAMOS LA CANTIDAD DE ESTUDIANTES POR CREDITOS A PARTIR DE LOS DATOS Y CREAMOS DICCIONARIO DE TRIMESTRE
+
 		while i <= 256:
 			resultDic[i] = 0
 
 			if (i>240):
 				while len(resultados) != 0:
-					print(resultados[0])
 					resultDic[i] += 1
 					resultados.pop(0)	
 			else:
@@ -205,7 +253,9 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 
 			i += 16
 
+		#-- FIN DE CALCULO DE CANTIDAD DE ESTUDIANTES
 
+		#-- VERIFICAMOS LA EXISTENCIA Y CANTIDAD DE ESTUDIANTES CON 0 CREDITOS APROBADOS
 
 		for rGeneral in resultado0:
 			esta = False
@@ -217,6 +267,10 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 			if not esta:
 				resultDic[0] += 1
 
+		#-- FIN DE VERIFICACION DE EXISTENCIA Y CANTIDAD DE ESTUDIANTES
+
+		#-- CALCULO DE PORCENTAJE DE ESTUDIANTES
+
 		total = 0
 		for key in resultDic:
 			total += resultDic[key]
@@ -224,5 +278,10 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 		if total > 0:
 			for key in resultDic:
 				resultDic[key] = resultDic[key]*100//total
+
+		#-- FIN DE CALCULO DE PORCENTAJE DE ESTUDIANTES
+
+		# DEVOLVEMOS DICCIONARIO CON EL PORCENTAJE DE CANTIDAD DE ESTUDIANTES CON CIERTA
+		# CANTIDAD DE CREDITOS APROBADOS (DESDE 0 HASTA 241 O MAS CON GRANULARIDAD DE 16)
 
 		return resultDic
