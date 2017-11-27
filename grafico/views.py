@@ -58,6 +58,11 @@ def cargarArchivo(request):
 	else:
 		form = DocumentForm()
 
+	error = request.GET.get('error', '')
+
+	if error != '':
+		return render(request, 'cargar.html', {'form':form, 'error':True})
+
 	return render(request, 'cargar.html', {'form':form})
 
 
@@ -101,32 +106,62 @@ def introducirDatos(request):
 	#-- CARGA DE BASE DE DATOS
 
 	for entrada in lector:
+
 		# LLENAR ESTUDIANTE
+
 		carnet = entrada['carnet']
 		if int(entrada['carnet'][:2]) > 67:
 			cohorte = "19"+entrada['carnet'][:2]
 		else:
 			cohorte = "20"+entrada['carnet'][:2]
 
+		try:
+			int(cohorte)
+			assert(int(cohorte) <=2017 and int(cohorte) >= 1967)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		nombre = entrada['nombre']
 
 		carrera = entrada['carrera']
 
+		try:
+			int(carrera)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		if Estudiante.objects.filter(carnet=carnet).count() == 0:
 			Estudiante.objects.create(carnet=carnet, cohorte=int(cohorte), carrera=carrera, nombre=nombre)
+
 		# LLENAR ASIGNATURA
 
 		codasig = entrada['codasig']
 		nomasig = entrada['nomasig']
 		creditos = entrada['creditos']
 
+		try:
+			int(creditos)
+			assert(int(creditos)<=999 and int(creditos)>=0)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		if Asignatura.objects.filter(codasig=codasig).count() == 0:
 			Asignatura.objects.create(codasig=codasig, nomasig=nomasig, creditos=int(creditos))
+
 		#LLENAR CURSA
+
 		trimestre = entrada['trimestre']
 		nota = entrada['nota']
 		if nota == 'R':
 			nota = '-1'
+
+		try:
+			int(nota)
+			int(trimestre)
+			assert(int(nota)<=5 and int(nota)>=-1)
+			assert(int(trimestre)<=15 and int(trimestre)>=1)
+		except:
+			return redirect('/grafico/carga?error=true')
 
 		if int(nota) < 3:
 			estado = "naprobado"

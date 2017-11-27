@@ -68,6 +68,14 @@ Ultima modificacion: 2 de noviembre 2017. -->
 	<div class="col-sm-3 columnas"></div>
 </div>
 
+{% if error %}
+<script type="text/javascript">
+	window.onload = function() {
+    	alert("Error en formato de datos del archivo.");
+}
+</script>
+{% endif %}
+
 <script type="text/javascript" language="javascript">
 	function checkfile(sender) {
 	    var validExts = new Array(".csv");
