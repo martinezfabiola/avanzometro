@@ -37,6 +37,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
     <ul class="nav navbar-nav">
       <li class="active"><a href="/">Inicio</a></li>
       <li class="inactive"><a href="../grafico/form">Cambiar Filtros</a></li>
+      <li class="inactive"><a href="../grafico/formGranularidad">Cambiar Granularidad</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       {% if user.is_authenticated %}
@@ -186,12 +187,31 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			renderChart(slider.value);
 		}
 
+		function createDatapoints(value, resultDic, labels, claves) {
+			var datapoints = [];
+			var diccionario = resultDic[value];
+			var claves = claves;
+			var i = 0;
+
+			while (i < claves.length) {
+				var data = { y: diccionario[claves[i]], label: labels[i] };
+				console.log(data)
+			    datapoints.push(data);
+			    i++;
+			}
+
+			return datapoints;
+		}
+
 		function renderChart(value, animation) {
 
 			var resultDic = JSON.parse('{{ resultDic | escapejs }}')
 			var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}')
 			var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}')
 			var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}')
+
+			var labels = {{ labels|safe }}
+			var claves = {{ claves|safe }}
 
 			var chart = new CanvasJS.Chart("chartContainer", {
 			  animationEnabled: animation,
@@ -224,25 +244,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			    legendMarkerColor: "#48D1CC",
 			    color : "#48D1CC",
 			    legendText: "{{ cohorteQuery }}",
-			    dataPoints: [ 
-			      	{ y: resultDic[value]['0'], label: "0"},
-			      	{ y: resultDic[value]['16'], label: "1-16"},
-			      	{ y: resultDic[value]['32'], label: "17-32"},
-			      	{ y: resultDic[value]['48'], label: "33-48"},
-			      	{ y: resultDic[value]['64'], label: "49-64"},
-			      	{ y: resultDic[value]['80'], label: "65-80"},
-			      	{ y: resultDic[value]['96'], label: "81-96"}, 
-			      	{ y: resultDic[value]['112'], label: "97-112"}, 
-			      	{ y: resultDic[value]['128'], label: "113-128"}, 
-			      	{ y: resultDic[value]['144'], label: "129-144"}, 
-			      	{ y: resultDic[value]['160'], label: "145-160"}, 
-			      	{ y: resultDic[value]['176'], label: "161-176"}, 
-			      	{ y: resultDic[value]['192'], label: "177-192"},
-			      	{ y: resultDic[value]['208'], label: "193-208"}, 
-			      	{ y: resultDic[value]['224'], label: "209-224"}, 
-			      	{ y: resultDic[value]['240'], label: "225-240"},
-			      	{ y: resultDic[value]['256'], label: "241-..."},
-			    ]
+			    dataPoints: createDatapoints(value, resultDic, labels, claves)
 			  }
 
 			  //Opcion 2 Cohorte   
@@ -253,25 +255,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			    legendMarkerColor: "#FF8C00",
 			    color: "#FF8C00",
 			    legendText: "{{ cohorteQuery2 }}",
-			    dataPoints: [ 
-			      	{ y: resultDic2[value]['0'], label: "0"},
-			      	{ y: resultDic2[value]['16'], label: "1-16"},
-			      	{ y: resultDic2[value]['32'], label: "17-32"},
-			      	{ y: resultDic2[value]['48'], label: "33-48"},
-			      	{ y: resultDic2[value]['64'], label: "49-64"},
-			      	{ y: resultDic2[value]['80'], label: "65-80"},
-			      	{ y: resultDic2[value]['96'], label: "81-96"}, 
-			      	{ y: resultDic2[value]['112'], label: "97-112"}, 
-			      	{ y: resultDic2[value]['128'], label: "113-128"}, 
-			      	{ y: resultDic2[value]['144'], label: "129-144"}, 
-			      	{ y: resultDic2[value]['160'], label: "145-160"}, 
-			      	{ y: resultDic2[value]['176'], label: "161-176"}, 
-			      	{ y: resultDic2[value]['192'], label: "177-192"},
-			      	{ y: resultDic2[value]['208'], label: "193-208"}, 
-			      	{ y: resultDic2[value]['224'], label: "209-224"}, 
-			      	{ y: resultDic2[value]['240'], label: "225-240"},
-			      	{ y: resultDic2[value]['256'], label: "241-..."},
-			    ]
+			    dataPoints: createDatapoints(value, resultDic2, labels, claves)
 			  }
 			  {% endif %}
 
@@ -283,25 +267,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			    legendMarkerColor: "#3CB371",
 			    color: "#3CB371",
 			    legendText: "{{ cohorteQuery3 }}",
-			    dataPoints: [ 
-			      	{ y: resultDic3[value]['0'], label: "0"},
-			      	{ y: resultDic3[value]['16'], label: "1-16"},
-			      	{ y: resultDic3[value]['32'], label: "17-32"},
-			      	{ y: resultDic3[value]['48'], label: "33-48"},
-			      	{ y: resultDic3[value]['64'], label: "49-64"},
-			      	{ y: resultDic3[value]['80'], label: "65-80"},
-			      	{ y: resultDic3[value]['96'], label: "81-96"}, 
-			      	{ y: resultDic3[value]['112'], label: "97-112"}, 
-			      	{ y: resultDic3[value]['128'], label: "113-128"}, 
-			      	{ y: resultDic3[value]['144'], label: "129-144"}, 
-			      	{ y: resultDic3[value]['160'], label: "145-160"}, 
-			      	{ y: resultDic3[value]['176'], label: "161-176"}, 
-			      	{ y: resultDic3[value]['192'], label: "177-192"},
-			      	{ y: resultDic3[value]['208'], label: "193-208"}, 
-			      	{ y: resultDic3[value]['224'], label: "209-224"}, 
-			      	{ y: resultDic3[value]['240'], label: "225-240"},
-			      	{ y: resultDic3[value]['256'], label: "241-..."},
-			    ]
+			    dataPoints: createDatapoints(value, resultDic3, labels, claves)
 			  }
 			  {% endif %}
 
@@ -313,25 +279,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			    legendMarkerColor: "#7B68EE",
 			    color: "#7B68EE",
 			    legendText: "{{ cohorteQuery4 }}",
-			    dataPoints: [ 
-			      	{ y: resultDic4[value]['0'], label: "0"},
-			      	{ y: resultDic4[value]['16'], label: "1-16"},
-			      	{ y: resultDic4[value]['32'], label: "17-32"},
-			      	{ y: resultDic4[value]['48'], label: "33-48"},
-			      	{ y: resultDic4[value]['64'], label: "49-64"},
-			      	{ y: resultDic4[value]['80'], label: "65-80"},
-			      	{ y: resultDic4[value]['96'], label: "81-96"}, 
-			      	{ y: resultDic4[value]['112'], label: "97-112"}, 
-			      	{ y: resultDic4[value]['128'], label: "113-128"}, 
-			      	{ y: resultDic4[value]['144'], label: "129-144"}, 
-			      	{ y: resultDic4[value]['160'], label: "145-160"}, 
-			      	{ y: resultDic4[value]['176'], label: "161-176"}, 
-			      	{ y: resultDic4[value]['192'], label: "177-192"},
-			      	{ y: resultDic4[value]['208'], label: "193-208"}, 
-			      	{ y: resultDic4[value]['224'], label: "209-224"}, 
-			      	{ y: resultDic4[value]['240'], label: "225-240"},
-			      	{ y: resultDic4[value]['256'], label: "241-..."},
-			    ]
+			    dataPoints: createDatapoints(value, resultDic4, labels, claves)
 			  }
 			  {% endif %}
 			  ]

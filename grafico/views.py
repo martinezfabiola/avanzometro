@@ -69,47 +69,6 @@ def introducirDatos(request):
 	
 	if request.method == 'POST':
 		cohorteQuery = request.POST['cohorteQuery']
-		carreraQuery = request.POST['carreraQuery'][:4]
-
-		# DICCIONARIOS DE LOS 15 QUERIES PARA COHORTE
-
-		resultDic = {}
-		resultDic2 = {}
-		resultDic3 = {}
-		resultDic4 = {}
-
-		# COHORTE 1 (OBLIGATORIA): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
-
-		for i in range(1, 16):
-			resultDic[i] = hacerQuery(cohorteQuery, str(i), carreraQuery)
-
-		# COHORTE 2 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
-
-		if request.POST['cohorteQuery2'] != "":
-
-			for i in range(1, 16):
-				resultDic2[i] = hacerQuery(request.POST['cohorteQuery2'], str(i), carreraQuery)
-
-		# COHORTE 3 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
-
-		if request.POST['cohorteQuery3'] != "":
-
-			for i in range(1, 16):
-				resultDic3[i] = hacerQuery(request.POST['cohorteQuery3'], str(i), carreraQuery)
-
-		# COHORTE 4 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
-
-		if request.POST['cohorteQuery4'] != "":
-
-			for i in range(1, 16):
-				resultDic4[i] = hacerQuery(request.POST['cohorteQuery4'], str(i), carreraQuery)
-
-		# GUARDAMOS LOS CUATRO DICCIONARIOS POR CADA COHORTE EN LA SESION
-
-		request.session['resultDic'] = resultDic
-		request.session['resultDic2'] = resultDic2
-		request.session['resultDic3'] = resultDic3
-		request.session['resultDic4'] = resultDic4
 
 		# GUARDAMOS LAS CUATRO COHORTES EN LA SESION
 
@@ -121,10 +80,11 @@ def introducirDatos(request):
 		# GUARDAMOS EL NOMBRE DE LA CARRERA EN LA SESION
 
 		request.session['carreraQuery'] = request.POST['carreraQuery'][4:]
+		request.session['codCarrera'] = request.POST['carreraQuery'][:4]
 
-		# ENVIAMOS AL GRAFICO
+		# ENVIAMOS A FORMULARIO DE GRANULARIDAD
 
-		return redirect('/grafico/chart')
+		return redirect('/grafico/granularidad')
 
 	# ELIMINAMOS DATOS VIEJOS DE LA BASE DE DATOS
 
@@ -181,6 +141,80 @@ def introducirDatos(request):
 
 	return render(request, 'form.html', {})
 
+@login_required
+def introducirGranularidad(request):
+	template_name='formGranularidad.html'
+
+	# SI RECIBIMOS LOS DATOS DEL FORMULARIO:
+
+	if request.method == "POST":
+
+		cohorte1 = request.session['cohorteQuery']
+		cohorte2 = request.session['cohorteQuery2']
+		cohorte3 = request.session['cohorteQuery3']
+		cohorte4 = request.session['cohorteQuery4']
+
+		carreraQuery = request.session['codCarrera']
+
+		granularidad = int(request.POST['granularidad'])
+
+		# DICCIONARIOS DE LOS 15 QUERIES PARA COHORTE
+
+		resultDic = {}
+		resultDic2 = {}
+		resultDic3 = {}
+		resultDic4 = {}
+
+		# COHORTE 1 (OBLIGATORIA): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
+		for i in range(1, 16):
+			resultDic[i] = hacerQuery(cohorte1, str(i), carreraQuery, granularidad)
+
+		# COHORTE 2 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
+		if cohorte2 != "":
+
+			for i in range(1, 16):
+				resultDic2[i] = hacerQuery(cohorte2, str(i), carreraQuery, granularidad)
+
+		# COHORTE 3 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
+		if cohorte3 != "":
+
+			for i in range(1, 16):
+				resultDic3[i] = hacerQuery(cohorte3, str(i), carreraQuery, granularidad)
+
+		# COHORTE 4 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
+		if cohorte4 != "":
+
+			for i in range(1, 16):
+				resultDic4[i] = hacerQuery(cohorte4, str(i), carreraQuery, granularidad)
+
+		# GUARDAMOS LOS CUATRO DICCIONARIOS POR CADA COHORTE EN LA SESION
+
+		request.session['resultDic'] = resultDic
+		request.session['resultDic2'] = resultDic2
+		request.session['resultDic3'] = resultDic3
+		request.session['resultDic4'] = resultDic4
+
+		# HACEMOS LOS LABELS DEL EJE X Y LOS GUARDAMOS EN LA SESION
+		labels = hacerLabels(granularidad)
+
+		request.session['labels'] = labels
+
+		# CALCULAMOS LAS CLAVES DE LOS DICCIONARIOS
+		claves = hacerClaves(resultDic[1])
+
+		request.session['claves'] = claves
+
+		# REDIRECCIONAMOS AL GRAFICO
+
+		return redirect('/grafico/chart')
+
+	# MOSTRAMOS EL FORMULARIO DE GRANULARIDAD
+
+	return render(request, 'formGranularidad.html', {})
 
 @login_required
 def mostrarGrafico(request):
@@ -202,13 +236,26 @@ def mostrarGrafico(request):
 	jsonDic3 = json.dumps(request.session['resultDic3'])
 	jsonDic4 = json.dumps(request.session['resultDic4'])
 
+	# CREAMOS DICCIONARIO A ENVIAR
+
+	labels = request.session['labels']
+	claves = request.session['claves']
+
+	print(labels)
+	print()
+	print(claves)
+
+	diccionario = {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3, 'resultDic4': jsonDic4,
+				'carreraQuery': carreraQuery, 'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2,
+				'cohorteQuery3': cohorteQuery3, 'cohorteQuery4': cohorteQuery4, 'labels': labels, 'claves': claves}
+
 	# ENVIAMOS TODAS LAS VARIABLES AL GRAFICO
 
-	return render(request, 'chart.html', {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3, 'resultDic4': jsonDic4, 'carreraQuery': carreraQuery, 'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2, 'cohorteQuery3': cohorteQuery3, 'cohorteQuery4': cohorteQuery4})
+	return render(request, 'chart.html', diccionario)
 
 
 # FUNCION PARA QUERY
-def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
+def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 
 		# QUERY ESPECIFICO POR COHORTE, TRIMESTRE Y CARRERA
 
@@ -251,7 +298,7 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 			#if len(resultados) == 0:
 			#	break
 
-			i += 16
+			i += granularidad
 
 		#-- FIN DE CALCULO DE CANTIDAD DE ESTUDIANTES
 
@@ -285,3 +332,31 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery):
 		# CANTIDAD DE CREDITOS APROBADOS (DESDE 0 HASTA 241 O MAS CON GRANULARIDAD DE 16)
 
 		return resultDic
+
+# FUNCION PARA LABEL DEL EJE X
+def hacerLabels(granularidad):
+
+	granulos = ["0"]
+	tope = granularidad
+
+	while tope <= 240:
+		intervalo = str(tope-(granularidad-1)) + " - " + str(tope)
+		granulos.append(intervalo)
+		tope += granularidad
+
+	ultimo = tope-granularidad
+	granulos.append(str(ultimo) + " - ...")
+
+	return granulos
+
+# FUNCION PARA CALCULAR LAS CLAVES DEL DICCIONARIO DE QUERY
+def hacerClaves(resultDic):
+	claves = []
+
+	for key in resultDic:
+		claves.append(key)
+
+	claves.sort(key=lambda clave: int(clave))
+
+	return claves
+

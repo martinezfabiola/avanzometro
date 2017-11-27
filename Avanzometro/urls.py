@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^grafico/carga', views.cargarArchivo),
     url(r'^grafico/form', views.introducirDatos),
     url(r'^grafico/chart', views.mostrarGrafico),
+    url(r'^grafico/granularidad', views.introducirGranularidad),
     url(r'^$', views.cargarArchivo),
     url(r'^login/$', auth_views.login, name="login") ,
     url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
