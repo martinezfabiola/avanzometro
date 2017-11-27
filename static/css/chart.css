@@ -4,9 +4,10 @@
 
 #slidecontainer {
     margin-top: 3.7%;
-    margin-left: -4%;
+    margin-right: 5%;
     text-align: center;
     width: 40%;
+    float: right;
 }
 
 .slider {
@@ -45,7 +46,7 @@
 }
 
 #botones {
-    margin: 7.2% 0 0 30% !important;
+    margin: 7.2% 0 0 8% !important;
 }
 
 .btn-sm {

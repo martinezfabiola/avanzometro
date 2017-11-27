@@ -35,9 +35,10 @@ Ultima modificacion: 2 de noviembre 2017. -->
       <a class="navbar-brand" href="/">Avanzómetro</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="/">Inicio</a></li>
+      <li class="inactive"><a href="/">Inicio</a></li>
       <li class="inactive"><a href="../grafico/form">Cambiar Filtros</a></li>
-      <li class="inactive"><a href="../grafico/formGranularidad">Cambiar Granularidad</a></li>
+      <li class="inactive"><a href="../grafico/granularidad">Cambiar Granularidad</a></li>
+      <li class="active"><a href="#">Gráfico</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       {% if user.is_authenticated %}
@@ -67,11 +68,14 @@ Ultima modificacion: 2 de noviembre 2017. -->
 	<!-- Botones para controlar el slider de trimestres -->
 		<div id="botones" class="container">
 
-				<button id="botonTiempo" class="btn btn-sm">
-					<input type="number" id="numeroTiempo" value="500"><span>ms</span>
-				</button>
+			<input type="button" id="botonCambio" class="btn btn-sm" value="Curvas" onclick="cambiarGrafico();">
+			
+			<button id="botonTiempo" class="btn btn-sm">
+				<input type="number" id="numeroTiempo" value="500"><span>ms</span>
+			</button>
 
-				<button id="botonAplicar" class="btn btn-sm" >Aplicar Velocidad</button>
+
+			<button id="botonAplicar" class="btn btn-sm" >Aplicar Velocidad</button>
 
 			<button id="botonReiniciar" class="btn btn-sm" onclick="reiniciar();">
 				<a href="#">
@@ -117,6 +121,8 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 		var tiempo = 500;
 
+		var tipoGrafica = document.getElementById("botonCambio");
+
 		window.onload = function () {
 			renderChart('1', true);
 		}
@@ -156,7 +162,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		    function go() {
 		   
 		        slider.stepUp();
-		        renderChart(slider.value);
+		        renderChart(slider.value, false);
 
 		        if (play) {
 		        	botonPlay.disabled = true;
@@ -173,19 +179,30 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 			var slider = document.getElementById("myRange");
 	    	slider.stepDown(16);
-	    	renderChart(slider.value);
+	    	renderChart(slider.value, false);
 	    
 		}
 
 		botonAvanzar.onclick = function() {
 			slider.stepUp();
-			renderChart(slider.value);
+			renderChart(slider.value, false);
 		}
 
 		botonRegresar.onclick = function() {
 			slider.stepDown();
-			renderChart(slider.value);
+			renderChart(slider.value, false);
 		}
+
+		function cambiarGrafico(){
+
+			if(tipoGrafica.value == "Barras"){
+				tipoGrafica.value="Curvas";
+				renderChart(slider.value, true);
+			}else{
+				tipoGrafica.value="Barras";
+				renderChart(slider.value, true);
+			}
+		}		
 
 		function createDatapoints(value, resultDic, labels, claves) {
 			var datapoints = [];
@@ -205,13 +222,20 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 		function renderChart(value, animation) {
 
-			var resultDic = JSON.parse('{{ resultDic | escapejs }}')
-			var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}')
-			var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}')
-			var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}')
+			if(tipoGrafica.value=="Curvas"){
+				var chartType = "column";
+			}else{
+				var chartType = "spline"; 
+			}
 
-			var labels = {{ labels|safe }}
-			var claves = {{ claves|safe }}
+			var resultDic = JSON.parse('{{ resultDic | escapejs }}');
+			var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}');
+			var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}');
+			var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}');
+
+
+			var labels = {{ labels|safe }};
+			var claves = {{ claves|safe }};
 
 			var chart = new CanvasJS.Chart("chartContainer", {
 			  animationEnabled: animation,
@@ -239,7 +263,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			  },
 
 			  data: [{        
-			    type: "column",  
+			    type: chartType,  
 			    showInLegend: true, 
 			    legendMarkerColor: "#48D1CC",
 			    color : "#48D1CC",
@@ -249,7 +273,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 			  //Opcion 2 Cohorte   
 			  {% if resultDic2 != "{}" %}
-			    ,{type: "column",
+			    ,{type: chartType,
 			    axisXindex: 1,  
 			    showInLegend: true, 
 			    legendMarkerColor: "#FF8C00",
@@ -261,7 +285,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 			  //Opcion 3 Cohorte   
 			  {% if resultDic3 != "{}" %}
-			    ,{type: "column",
+			    ,{type: chartType,
 			    axisXindex: 1,  
 			    showInLegend: true, 
 			    legendMarkerColor: "#3CB371",
@@ -273,7 +297,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 
 			  //Opcion 2 Cohorte   
 			  {% if resultDic4 != "{}" %}
-			    ,{type: "column",
+			    ,{type: chartType,
 			    axisXindex: 1,  
 			    showInLegend: true, 
 			    legendMarkerColor: "#7B68EE",

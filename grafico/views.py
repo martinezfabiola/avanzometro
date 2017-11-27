@@ -282,8 +282,9 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 		#-- FIN DE GUARDAR DATOS ORDENADOS
 
 		#-- CALCULAMOS LA CANTIDAD DE ESTUDIANTES POR CREDITOS A PARTIR DE LOS DATOS Y CREAMOS DICCIONARIO DE TRIMESTRE
+		maximo = 240 - (240%granularidad) + granularidad
 
-		while i <= 256:
+		while i <= maximo:
 			resultDic[i] = 0
 
 			if (i>240):
