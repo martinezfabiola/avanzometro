@@ -58,6 +58,11 @@ def cargarArchivo(request):
 	else:
 		form = DocumentForm()
 
+	error = request.GET.get('error', '')
+
+	if error != '':
+		return render(request, 'cargar.html', {'form':form, 'error':True})
+
 	return render(request, 'cargar.html', {'form':form})
 
 
@@ -76,6 +81,7 @@ def introducirDatos(request):
 		request.session['cohorteQuery2'] = request.POST['cohorteQuery2']
 		request.session['cohorteQuery3'] = request.POST['cohorteQuery3']
 		request.session['cohorteQuery4'] = request.POST['cohorteQuery4']
+		request.session['cohorteQuery5'] = request.POST['cohorteQuery5']
 
 		# GUARDAMOS EL NOMBRE DE LA CARRERA EN LA SESION
 
@@ -100,32 +106,62 @@ def introducirDatos(request):
 	#-- CARGA DE BASE DE DATOS
 
 	for entrada in lector:
+
 		# LLENAR ESTUDIANTE
+
 		carnet = entrada['carnet']
 		if int(entrada['carnet'][:2]) > 67:
 			cohorte = "19"+entrada['carnet'][:2]
 		else:
 			cohorte = "20"+entrada['carnet'][:2]
 
+		try:
+			int(cohorte)
+			assert(int(cohorte) <=2017 and int(cohorte) >= 1967)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		nombre = entrada['nombre']
 
 		carrera = entrada['carrera']
 
+		try:
+			int(carrera)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		if Estudiante.objects.filter(carnet=carnet).count() == 0:
 			Estudiante.objects.create(carnet=carnet, cohorte=int(cohorte), carrera=carrera, nombre=nombre)
+
 		# LLENAR ASIGNATURA
 
 		codasig = entrada['codasig']
 		nomasig = entrada['nomasig']
 		creditos = entrada['creditos']
 
+		try:
+			int(creditos)
+			assert(int(creditos)<=999 and int(creditos)>=0)
+		except:
+			return redirect('/grafico/carga?error=true')
+
 		if Asignatura.objects.filter(codasig=codasig).count() == 0:
 			Asignatura.objects.create(codasig=codasig, nomasig=nomasig, creditos=int(creditos))
+
 		#LLENAR CURSA
+
 		trimestre = entrada['trimestre']
 		nota = entrada['nota']
 		if nota == 'R':
 			nota = '-1'
+
+		try:
+			int(nota)
+			int(trimestre)
+			assert(int(nota)<=5 and int(nota)>=-1)
+			assert(int(trimestre)<=15 and int(trimestre)>=1)
+		except:
+			return redirect('/grafico/carga?error=true')
 
 		if int(nota) < 3:
 			estado = "naprobado"
@@ -153,6 +189,8 @@ def introducirGranularidad(request):
 		cohorte2 = request.session['cohorteQuery2']
 		cohorte3 = request.session['cohorteQuery3']
 		cohorte4 = request.session['cohorteQuery4']
+		cohorte5 = request.session['cohorteQuery5']
+
 
 		carreraQuery = request.session['codCarrera']
 
@@ -164,6 +202,7 @@ def introducirGranularidad(request):
 		resultDic2 = {}
 		resultDic3 = {}
 		resultDic4 = {}
+		resultDic5 = {}
 
 		# COHORTE 1 (OBLIGATORIA): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
 
@@ -191,12 +230,20 @@ def introducirGranularidad(request):
 			for i in range(1, 16):
 				resultDic4[i] = hacerQuery(cohorte4, str(i), carreraQuery, granularidad)
 
+		# COHORTE 5 (OPCIONAL): CARGAMOS UN SUB-DICCIONARIO DEL QUERY POR CADA TRIMESTRE
+
+		if cohorte5 != "":
+
+			for i in range(1, 16):
+				resultDic5[i] = hacerQuery(cohorte5, str(i), carreraQuery, granularidad)
+
 		# GUARDAMOS LOS CUATRO DICCIONARIOS POR CADA COHORTE EN LA SESION
 
 		request.session['resultDic'] = resultDic
 		request.session['resultDic2'] = resultDic2
 		request.session['resultDic3'] = resultDic3
 		request.session['resultDic4'] = resultDic4
+		request.session['resultDic5'] = resultDic5
 
 		# HACEMOS LOS LABELS DEL EJE X Y LOS GUARDAMOS EN LA SESION
 		labels = hacerLabels(granularidad)
@@ -228,6 +275,9 @@ def mostrarGrafico(request):
 	cohorteQuery2 = request.session['cohorteQuery2']
 	cohorteQuery3 = request.session['cohorteQuery3']
 	cohorteQuery4 = request.session['cohorteQuery4']
+	cohorteQuery5 = request.session['cohorteQuery5']
+
+	print(cohorteQuery5)
 
 	# CONVERTIMOS LOS DICCIONARIOS EN STRINGS COMPATIBLES CON VARIABLES JSON DE JavaScript
 
@@ -235,19 +285,17 @@ def mostrarGrafico(request):
 	jsonDic2 = json.dumps(request.session['resultDic2'])
 	jsonDic3 = json.dumps(request.session['resultDic3'])
 	jsonDic4 = json.dumps(request.session['resultDic4'])
+	jsonDic5 = json.dumps(request.session['resultDic5'])
 
 	# CREAMOS DICCIONARIO A ENVIAR
 
 	labels = request.session['labels']
 	claves = request.session['claves']
 
-	print(labels)
-	print()
-	print(claves)
-
-	diccionario = {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3, 'resultDic4': jsonDic4,
-				'carreraQuery': carreraQuery, 'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2,
-				'cohorteQuery3': cohorteQuery3, 'cohorteQuery4': cohorteQuery4, 'labels': labels, 'claves': claves}
+	diccionario = {'resultDic': jsonDic, 'resultDic2': jsonDic2, 'resultDic3': jsonDic3,
+					'resultDic4': jsonDic4, 'resultDic5': jsonDic5, 'carreraQuery': carreraQuery,
+					'cohorteQuery': cohorteQuery, 'cohorteQuery2': cohorteQuery2, 'cohorteQuery3': cohorteQuery3,
+					'cohorteQuery4': cohorteQuery4, 'cohorteQuery5': cohorteQuery5, 'labels': labels, 'claves': claves}
 
 	# ENVIAMOS TODAS LAS VARIABLES AL GRAFICO
 

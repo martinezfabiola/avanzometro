@@ -69,7 +69,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 		<div id="botones" class="container">
 
 			<input type="button" id="botonCambio" class="btn btn-sm" value="Curvas" onclick="cambiarGrafico();">
-			
+
 			<button id="botonTiempo" class="btn btn-sm">
 				<input type="number" id="numeroTiempo" value="500"><span>ms</span>
 			</button>
@@ -232,6 +232,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}');
 			var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}');
 			var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}');
+			var resultDic5 = JSON.parse('{{ resultDic5 | escapejs }}');
 
 
 			var labels = {{ labels|safe }};
@@ -295,7 +296,7 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			  }
 			  {% endif %}
 
-			  //Opcion 2 Cohorte   
+			  //Opcion 4 Cohorte   
 			  {% if resultDic4 != "{}" %}
 			    ,{type: chartType,
 			    axisXindex: 1,  
@@ -304,6 +305,18 @@ Ultima modificacion: 2 de noviembre 2017. -->
 			    color: "#7B68EE",
 			    legendText: "{{ cohorteQuery4 }}",
 			    dataPoints: createDatapoints(value, resultDic4, labels, claves)
+			  }
+			  {% endif %}
+
+			  //Opcion 5 Cohorte   
+			  {% if resultDic5 != "{}" %}
+			    ,{type: chartType,
+			    axisXindex: 1,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#CC0000",
+			    color: "#CC0000",
+			    legendText: "{{ cohorteQuery5 }}",
+			    dataPoints: createDatapoints(value, resultDic5, labels, claves)
 			  }
 			  {% endif %}
 			  ]
