@@ -2,6 +2,8 @@
 
 # Para instalar por primera vez:
 
+-Requisitos: Python 3 y PostgreSQL
+
 -Clonar el repositorio
 
 -Instalar Django en Python3: 
