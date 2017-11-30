@@ -252,7 +252,15 @@ def introducirGranularidad(request):
 			for i in range(1, 16):
 				resultDic5[i] = hacerQuery(cohorte5, str(i), carreraQuery, granularidad)
 
+		# HACEMOS LOS LABELS DEL EJE X Y LOS GUARDAMOS EN LA SESION
+		labels = hacerLabels(granularidad)
+
+		# CALCULAMOS LAS CLAVES DE LOS DICCIONARIOS
+		claves = hacerClaves(resultDic[1])
+		
 		# GUARDAMOS LOS CUATRO DICCIONARIOS POR CADA COHORTE EN LA SESION
+		request.session['labels'] = labels
+		request.session['claves'] = claves
 
 		request.session['resultDic'] = resultDic
 		request.session['resultDic2'] = resultDic2
@@ -260,18 +268,10 @@ def introducirGranularidad(request):
 		request.session['resultDic4'] = resultDic4
 		request.session['resultDic5'] = resultDic5
 
-		# HACEMOS LOS LABELS DEL EJE X Y LOS GUARDAMOS EN LA SESION
-		labels = hacerLabels(granularidad)
-
-		request.session['labels'] = labels
-
-		# CALCULAMOS LAS CLAVES DE LOS DICCIONARIOS
-		claves = hacerClaves(resultDic[1])
-
-		request.session['claves'] = claves
+		print(request.session['labels'])
+		print("WTFFFF")
 
 		# REDIRECCIONAMOS AL GRAFICO
-
 		return redirect('/grafico/chart')
 
 	# MOSTRAMOS EL FORMULARIO DE GRANULARIDAD
@@ -281,6 +281,8 @@ def introducirGranularidad(request):
 @login_required
 def mostrarGrafico(request):
 	template_name='chart.html'
+
+	print(request.session['labels'])
 
 	# OBTENEMOS LOS DICCIONARIOS DE DATOS DE LAS CUATRO COHORTES
 
@@ -302,7 +304,6 @@ def mostrarGrafico(request):
 	jsonDic5 = json.dumps(request.session['resultDic5'])
 
 	# CREAMOS DICCIONARIO A ENVIAR
-
 	labels = request.session['labels']
 	claves = request.session['claves']
 
