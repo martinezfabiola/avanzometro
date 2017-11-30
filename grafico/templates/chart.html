@@ -1,0 +1,329 @@
+<!-- Universidad Simon Bolivar
+Ingenieria de Software
+Integrantes:
+	Abelardo Salazar
+	Amanda Camacho
+	Fabiola Martinez
+	Lautaro Villalon
+	Maria Bracamonte
+	Yarima Luciani
+Descripcion: generador de grafica.
+Ultima modificacion: 2 de noviembre 2017. -->
+<!DOCTYPE HTML>
+<html>
+<head>  
+	<title>Avanzómetro</title>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{%load static%}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+	<script src="{% static 'js/jquery.min.js'%}"></script>
+	<script src="{% static 'js/bootstrap.min.js'%}"></script>
+	<script type="text/javascript" src="{% static 'js/canvasjs.min.js'%}"></script>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/chart.css'%}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Creamos navbar -->
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Avanzómetro</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="inactive"><a href="/">Inicio</a></li>
+      <li class="inactive"><a href="../grafico/form">Cambiar Filtros</a></li>
+      <li class="inactive"><a href="../grafico/granularidad">Cambiar Granularidad</a></li>
+      <li class="active"><a href="#">Gráfico</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-user"></span>Cerrar Sesión {{ user.username }}</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-user"></span>Ingresar</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<!-- Creamos grafica -->
+<div class="row">
+
+<div class="col-sm-12">
+
+	<script type="text/javascript"></script>
+	<div id="chartContainer" style="height: 400px; width: 100%;"></div>
+
+</div>
+</div>
+
+<div class="row" id="controles">
+
+	<div id="buttonscontainer" class="col-sm-6">
+
+	<!-- Botones para controlar el slider de trimestres -->
+		<div id="botones" class="container">
+
+			<input type="button" id="botonCambio" class="btn btn-sm" value="Curvas" onclick="cambiarGrafico();">
+
+			<button id="botonTiempo" class="btn btn-sm">
+				<input type="number" id="numeroTiempo" value="500"><span>ms</span>
+			</button>
+
+
+			<button id="botonAplicar" class="btn btn-sm" >Aplicar Velocidad</button>
+
+			<button id="botonReiniciar" class="btn btn-sm" onclick="reiniciar();">
+				<a href="#">
+					<span class="glyphicon glyphicon-repeat"></span>
+				</a>
+			</button>
+
+			<button id="botonRegresar" class="btn btn-sm">
+				<a href="#">
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</a>
+			</button>
+
+			<button id="botonStop" class="btn btn-sm">
+				<a href="#">
+					<span class="glyphicon glyphicon-stop"></span>
+				</a>
+			</button>
+
+			<button id="botonPlay" class="btn btn-sm" onclick="reproducir();">
+				<a href="#">
+					<span class="glyphicon glyphicon-play"></span>
+				</a>
+			</button>
+
+			<button id="botonAvanzar" class="btn btn-sm">
+				<a href="#">
+					<span class="glyphicon glyphicon-arrow-right"></span>
+				</a>
+			</button>
+		</div>
+	</div>
+
+	<!-- Slider de trimestres -->
+	<div id="slidecontainer" class="col-sm-6">
+
+	  <input type="range" min="1" max="15" value="1" class="slider" id="myRange" oninput="renderChart(this.value, false)" selected>
+
+	</div>
+
+	<script>
+		var slider = document.getElementById("myRange");
+
+		var tiempo = 500;
+
+		var tipoGrafica = document.getElementById("botonCambio");
+
+		window.onload = function () {
+			renderChart('1', true);
+		}
+
+		botonAplicar.onclick = function() {
+			var numeroTiempo = document.getElementById("numeroTiempo").value;
+			tiempo = parseInt(numeroTiempo);
+		} 
+
+		function reproducir() {
+
+			var play = true;
+		    
+		    var botonPlay = document.getElementById("botonPlay");
+
+		    var botonStop = document.getElementById("botonStop");
+
+		    var slider = document.getElementById("myRange");
+
+		    var botonRegresar = document.getElementById("botonRegresar");
+
+		    var botonAvanzar = document.getElementById("botonAvanzar");
+
+		    
+
+			botonAplicar.onclick = function() {
+				var numeroTiempo = document.getElementById("numeroTiempo").value;
+				tiempo = parseInt(numeroTiempo);
+			} 
+		    
+		    botonStop.onclick = function () {
+		    	play = false;
+		        botonPlay.disabled = false;
+		    }
+		    
+		    
+		    function go() {
+		   
+		        slider.stepUp();
+		        renderChart(slider.value, false);
+
+		        if (play) {
+		        	botonPlay.disabled = true;
+		            setTimeout(go, tiempo);
+		        }
+		        
+		    }
+		    
+		    go();
+	   
+		}
+
+		function reiniciar() {
+
+			var slider = document.getElementById("myRange");
+	    	slider.stepDown(16);
+	    	renderChart(slider.value, false);
+	    
+		}
+
+		botonAvanzar.onclick = function() {
+			slider.stepUp();
+			renderChart(slider.value, false);
+		}
+
+		botonRegresar.onclick = function() {
+			slider.stepDown();
+			renderChart(slider.value, false);
+		}
+
+		function cambiarGrafico(){
+
+			if(tipoGrafica.value == "Barras"){
+				tipoGrafica.value="Curvas";
+				renderChart(slider.value, true);
+			}else{
+				tipoGrafica.value="Barras";
+				renderChart(slider.value, true);
+			}
+		}		
+
+		function createDatapoints(value, resultDic, labels, claves) {
+			var datapoints = [];
+			var diccionario = resultDic[value];
+			var claves = claves;
+			var i = 0;
+
+			while (i < claves.length) {
+				var data = { y: diccionario[claves[i]], label: labels[i] };
+			    datapoints.push(data);
+			    i++;
+			}
+
+			return datapoints;
+		}
+
+		function renderChart(value, animation) {
+
+			if(tipoGrafica.value=="Curvas"){
+				var chartType = "column";
+			}else{
+				var chartType = "spline"; 
+			}
+
+			var resultDic = JSON.parse('{{ resultDic | escapejs }}');
+			var resultDic2 = JSON.parse('{{ resultDic2 | escapejs }}');
+			var resultDic3 = JSON.parse('{{ resultDic3 | escapejs }}');
+			var resultDic4 = JSON.parse('{{ resultDic4 | escapejs }}');
+			var resultDic5 = JSON.parse('{{ resultDic5 | escapejs }}');
+
+
+			var labels = {{ labels|safe }};
+			var claves = {{ claves|safe }};
+
+			var chart = new CanvasJS.Chart("chartContainer", {
+			  animationEnabled: animation,
+
+			  title:{
+			    text: "{{carreraQuery}}"
+			  },
+
+			  subtitles:[
+			  {
+				text: "Trimestre ".concat(value),
+				fontSize: 20,
+			  }],
+
+			  axisY: {
+			    title: "Estudiantes",
+			    suffix: '%',
+
+			    maximum: 100,
+			    interval: 25
+			  },
+
+			  axisX: {
+			    title: "Créditos Aprobados",
+			  },
+
+			  data: [{        
+			    type: chartType,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#48D1CC",
+			    color : "#48D1CC",
+			    legendText: "{{ cohorteQuery }}",
+			    dataPoints: createDatapoints(value, resultDic, labels, claves)
+			  }
+
+			  //Opcion 2 Cohorte   
+			  {% if resultDic2 != "{}" %}
+			    ,{type: chartType,
+			    axisXindex: 1,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#FF8C00",
+			    color: "#FF8C00",
+			    legendText: "{{ cohorteQuery2 }}",
+			    dataPoints: createDatapoints(value, resultDic2, labels, claves)
+			  }
+			  {% endif %}
+
+			  //Opcion 3 Cohorte   
+			  {% if resultDic3 != "{}" %}
+			    ,{type: chartType,
+			    axisXindex: 1,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#3CB371",
+			    color: "#3CB371",
+			    legendText: "{{ cohorteQuery3 }}",
+			    dataPoints: createDatapoints(value, resultDic3, labels, claves)
+			  }
+			  {% endif %}
+
+			  //Opcion 4 Cohorte   
+			  {% if resultDic4 != "{}" %}
+			    ,{type: chartType,
+			    axisXindex: 1,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#7B68EE",
+			    color: "#7B68EE",
+			    legendText: "{{ cohorteQuery4 }}",
+			    dataPoints: createDatapoints(value, resultDic4, labels, claves)
+			  }
+			  {% endif %}
+
+			  //Opcion 5 Cohorte   
+			  {% if resultDic5 != "{}" %}
+			    ,{type: chartType,
+			    axisXindex: 1,  
+			    showInLegend: true, 
+			    legendMarkerColor: "#CC0000",
+			    color: "#CC0000",
+			    legendText: "{{ cohorteQuery5 }}",
+			    dataPoints: createDatapoints(value, resultDic5, labels, claves)
+			  }
+			  {% endif %}
+			  ]
+			});
+			chart.render();
+			}
+	</script>
+
+</div>
+</body>
+</html>

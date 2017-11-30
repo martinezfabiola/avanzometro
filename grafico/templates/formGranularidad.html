@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>form</title>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{%load static%}
+	<link rel="stylesheet" href="{% static 'css/form.css'%}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+	<script src="{% static 'js/jquery.min.js'%}"></script>
+	<script src="{% static 'js/bootstrap.min.js'%}"></script>
+	<script type="text/javascript" src="{% static 'js/canvasjs.min.js'%}"></script>
+</head>
+<body>
+		<nav class="navbar navbar-inverse">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <a class="navbar-brand" href="#">Avanzómetro</a>
+		    </div>
+		    <ul class="nav navbar-nav">
+		      <li class="inactive"><a href="/">Inicio</a></li>
+      		  <li class="inactive"><a href="../grafico/form">Cambiar Filtros</a></li>
+      		  <li class="active"><a href="#">Cambiar Granularidad</a></li>
+		    </ul>
+		    <ul class="nav navbar-nav navbar-right">
+		      <li><a href="#"><span class="glyphicon glyphicon-user"></span>Cerrar sesión</a></li>
+		    </ul>
+		  </div>
+		</nav>
+
+	<div class="row">
+		<div class="col-sm-3"></div>
+
+		<div id="columnaMedio" class="col-sm-6">
+			<div class="row"></div>
+			<div id="cuadrado" class="row">
+				<p id="mensaje">
+					<b>Si desea cambiar la granuralidad de la gráfica ingrese el siguiente dato</b>
+				</p>
+
+				<form id="datosUsuario" method="POST" enctype="multipart/form-data"> 
+				{% csrf_token %}
+					<div class="form-group">
+						<label for="numericInput">Granularidad:</label>
+						<br>
+						<input id="numericInput" class="form-control" type="number" name="granularidad" min="5" max="100" value="16">
+					</div>
+			</div>
+
+			<div class="row">
+				<div id="boton" class="form-group text-center">
+						<button type="submit" class="btn btn-default">Enviar</button> 
+				</div>
+			</div>
+
+			</form>
+		</div>
+
+		<div class="col-sm-3"></div>
+	</div>
+</div>
+
+</body>
+</html>
