@@ -107,6 +107,20 @@ def introducirDatos(request):
 
 	for entrada in lector:
 
+		try:
+			entrada['carnet']
+			entrada['nombre']
+			entrada['carrera']
+			entrada['trimestre']
+			entrada['anio']
+			entrada['codasig']
+			entrada['nomasig']
+			entrada['nota']
+			entrada['creditos']
+
+		except:
+			return redirect('/grafico/carga?error=true')
+			
 		# LLENAR ESTUDIANTE
 
 		carnet = entrada['carnet']
