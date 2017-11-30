@@ -26,7 +26,6 @@ class Asignatura(models.Model):
         db_table = 'asignatura'
 
 class Cursa(models.Model):
-    id = models.AutoField(primary_key=True, default = -1)
     carnet = models.ForeignKey('Estudiante', models.CASCADE, db_column='carnet')
     codasig = models.ForeignKey('Asignatura', models.CASCADE, db_column='codasig')
     trimestre = models.DecimalField(max_digits=2, decimal_places=0)

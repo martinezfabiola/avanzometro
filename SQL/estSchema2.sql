@@ -70,8 +70,9 @@ SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = est
 
 
 
+"SELECT sum(creditos), estudiante.carnet FROM estudiante NATURAL JOIN cursa NATURAL JOIN asignatura WHERE cursa.estado = 'aprobado' and estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.trimestre <= "+trimQuery+" GROUP BY estudiante.carnet ORDER BY sum;"
 
 
-
+"SELECT DISTINCT cursa.carnet FROM cursa NATURAL JOIN estudiante WHERE estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+"  AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet;"
 
 
