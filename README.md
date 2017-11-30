@@ -1,4 +1,4 @@
-# avanzometro
+# Avanzómetro
 
 # Para instalar por primera vez:
 
