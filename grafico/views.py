@@ -269,9 +269,6 @@ def introducirGranularidad(request):
 		request.session['resultDic4'] = resultDic4
 		request.session['resultDic5'] = resultDic5
 
-		print(request.session['labels'])
-		print("WTFFFF")
-
 		# REDIRECCIONAMOS AL GRAFICO
 		return redirect('/grafico/chart')
 
@@ -282,8 +279,6 @@ def introducirGranularidad(request):
 @login_required
 def mostrarGrafico(request):
 	template_name='chart.html'
-
-	print(request.session['labels'])
 
 	# OBTENEMOS LOS DICCIONARIOS DE DATOS DE LAS CUATRO COHORTES
 
