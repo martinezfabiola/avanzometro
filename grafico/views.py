@@ -292,7 +292,6 @@ def mostrarGrafico(request):
 	cohorteQuery4 = request.session['cohorteQuery4']
 	cohorteQuery5 = request.session['cohorteQuery5']
 
-	print(cohorteQuery5)
 
 	# CONVERTIMOS LOS DICCIONARIOS EN STRINGS COMPATIBLES CON VARIABLES JSON DE JavaScript
 
@@ -354,7 +353,7 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 		#-- CALCULAMOS LA CANTIDAD DE ESTUDIANTES POR CREDITOS A PARTIR DE LOS DATOS Y CREAMOS DICCIONARIO DE TRIMESTRE
 		maximo = 240 - (240%granularidad) + granularidad
 
-		while i <= 256:
+		while i <= maximo:
 			resultDic[i] = 0
 
 			if (i>240):
@@ -419,6 +418,7 @@ def hacerLabels(granularidad):
 	ultimo = tope-granularidad
 	granulos.append(str(ultimo) + " - ...")
 
+	print(granulos)
 	return granulos
 
 # FUNCION PARA CALCULAR LAS CLAVES DEL DICCIONARIO DE QUERY
