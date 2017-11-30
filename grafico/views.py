@@ -418,7 +418,6 @@ def hacerLabels(granularidad):
 	ultimo = tope-granularidad
 	granulos.append(str(ultimo) + " - ...")
 
-	print(granulos)
 	return granulos
 
 # FUNCION PARA CALCULAR LAS CLAVES DEL DICCIONARIO DE QUERY
