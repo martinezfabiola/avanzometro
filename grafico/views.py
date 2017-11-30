@@ -184,7 +184,8 @@ def introducirDatos(request):
 		else:
 			estado = "aprobado"
 
-		Cursa.objects.create(carnet=Estudiante.objects.filter(carnet=carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre), estado=estado, nota=int(nota))
+		if Cursa.objects.filter(carnet=Estudiante.objects.filter(carnet = carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre)).count() == 0:
+			Cursa.objects.create(carnet=Estudiante.objects.filter(carnet=carnet)[0], codasig=Asignatura.objects.filter(codasig=codasig)[0], trimestre=int(trimestre), estado=estado, nota=int(nota))
 
 	#-- FIN DE CARGA DE BASE DE DATOS
 
