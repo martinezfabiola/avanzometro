@@ -22,6 +22,7 @@ from .models import *
 from django.http import JsonResponse
 
 from grafico.forms import SignUpForm
+from django.db import connection
 import json
 
 # Create your views here.
@@ -321,22 +322,29 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 
 		# QUERY ESPECIFICO POR COHORTE, TRIMESTRE Y CARRERA
 
-		query = "SELECT sum(creditos), id, cursa.carnet, estado FROM asignatura, cursa, estudiante WHERE asignatura.codasig = cursa.codasig AND cursa.carnet = estudiante.carnet AND cursa.estado = 'aprobado' AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, estado, id ORDER BY sum;"
+		query = "SELECT sum(creditos), estudiante.carnet FROM estudiante NATURAL JOIN cursa NATURAL JOIN asignatura WHERE cursa.estado = 'aprobado' and estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+" AND cursa.trimestre <= "+trimQuery+" GROUP BY estudiante.carnet ORDER BY sum;"
 
 		# QUERY GENERICO PARA CALCULAR LA CANTIDAD QUE TIENE 0 CREDITOS APROBADOS
 
-		query0 = "SELECT DISTINCT id, cursa.carnet FROM cursa, estudiante WHERE cursa.carnet = estudiante.carnet AND estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+"  AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet, id;"
+		query0 = "SELECT DISTINCT cursa.carnet FROM cursa NATURAL JOIN estudiante WHERE estudiante.cohorte = "+cohorteQuery+" AND estudiante.carrera = "+carreraQuery+"  AND cursa.trimestre <= "+trimQuery+" GROUP BY cursa.carnet;"
 		
 		# REALIZAMOS EL QUERY
 
-		resultado = Cursa.objects.raw(query)
-		resultado0 = Cursa.objects.raw(query0)
+		cursor = connection.cursor()
+		cursor.execute(query)
+
+		resultado = cursor.fetchall()
+
+		cursor0 = connection.cursor()
+		cursor0.execute(query0)
+
+		resultado0 = cursor0.fetchall()
 
 		#-- GUARDAR DATOS ORDENADOS
 
 		resultados = []
 		for r in resultado:
-			resultados.append(int(r.sum))
+			resultados.append(int(r[0]))
 
 		i = 0
 		resultDic = {}
@@ -346,7 +354,7 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 		#-- CALCULAMOS LA CANTIDAD DE ESTUDIANTES POR CREDITOS A PARTIR DE LOS DATOS Y CREAMOS DICCIONARIO DE TRIMESTRE
 		maximo = 240 - (240%granularidad) + granularidad
 
-		while i <= maximo:
+		while i <= 256:
 			resultDic[i] = 0
 
 			if (i>240):
@@ -370,7 +378,7 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 		for rGeneral in resultado0:
 			esta = False
 			for rAprobado in resultado:
-				if rAprobado.carnet.carnet == rGeneral.carnet.carnet:
+				if rAprobado[1] == rGeneral[0]:
 					esta = True
 					break
 
@@ -393,6 +401,7 @@ def hacerQuery(cohorteQuery, trimQuery, carreraQuery, granularidad):
 
 		# DEVOLVEMOS DICCIONARIO CON EL PORCENTAJE DE CANTIDAD DE ESTUDIANTES CON CIERTA
 		# CANTIDAD DE CREDITOS APROBADOS (DESDE 0 HASTA 241 O MAS CON GRANULARIDAD DE 16)
+
 
 		return resultDic
 
